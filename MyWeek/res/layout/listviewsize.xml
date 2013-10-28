@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This xml page is used to set the Size of the ListViews
+     in the displayWeek.xml.-->
+     
+     
+<TextView xmlns:android="http://schemas.android.com/apk/res/android" 
+        android:id="@android:id/text1"  
+        android:paddingTop="2dip" 
+        android:paddingBottom="3dip" 
+        android:textSize="10sp"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:textColor="@color/BabyBlue"/> 
