@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">My Week</string>
+    <string name="action_settings">Settings</string>
+    <string name="lblFridayText">Friday</string>
+    <string name="lblThursdayText">Thursday</string>
+    <string name="lblWednesdayText">Wednesday</string>
+    <string name="lblTuesdayText">Tuesday</string>
+    <string name="lblMondayText">Monday</string>
+    <string name="my_weekTitle">My Week</string>
+
+    <color name="Gunmetal">#2C3539</color>
+    <color name="BabyBlue">#95B9C7</color>
+    <color name="orange">#ff5500</color>
+    <color name="white">#ffffff</color>
+  	<color name="transparent">#00000000</color>
+ 	<color name="date_color">#999999</color>
+	<color name="black">#000000</color>
+	<color name="gray">#999999</color>
+	<color name="blue">#0066cc</color>
+	<color name="gold">#e6b121</color>
+	<color name="blueback">#99FFFF</color>
+	<color name="articlecolor">#3399FF</color> 
+	<color name="article_title">#3399FF</color> 
+	<color name="cachecolor">#8ad0e8</color>
+	
+	
+	<color name="yellow1">#F9E60E</color>
+	<color name="yellow2">#F9F89D</color>
+    <color name="orange4">#F7BE45</color>
+    <color name="orange5">#F7D896</color>
+    <color name="blue2">#19FCDA</color>
+    <color name="blue25">#D9F7F2</color>
+    <color name="grey05">#ACA899</color>
+    <color name="white1">#FFFFFF</color>
+    <color name="white2">#DDDDDD</color>
+    <string-array name="days_array">
+        <item >Select A Day</item>
+        <item >Monday</item>
+        <item >Tuesday</item>
+        <item >Wednesday</item>
+        <item >Thursday</item>
+        <item >Friday</item>
+    </string-array>
+        <string name="lblselect_day">Select Day</string>
+        <string name="lblButtonBack">Back</string>
+        <string name="lblButtongo_to_day">Go To Day</string>
+        <string name="btn_lbl_my_week_main">My Week</string>
+        <string name="lbl_welcome_to_my_week_main">Welcome To My Week</string>
+        <string name="txt_lbl_Totals_Main">Totals</string>
+        <string name="btn_txt_lbl_Totals_Main">Totals</string>
+        <string name="btn_lbl_Finished_Main">Finished</string>
+        <string name="btn_lbl_manage_clients_main">Manage Clients</string>
+        <string name="btnBackManageClients">Back</string>
+        <string name="btnlblBackManageClients">Back</string>
+        <string name="btnlblAddManageClients">Add</string>
+        <string name="btnlblScheduleManageClients">Schedule</string>
+        <string name="btnlblDeleteManageClients">Delete</string>
+        <string name="edittextlblPatientNameManageClients">Enter Patient Name</string>
+        <string name="lblManagePatients">Manage Patients</string>
+   
+</resources>

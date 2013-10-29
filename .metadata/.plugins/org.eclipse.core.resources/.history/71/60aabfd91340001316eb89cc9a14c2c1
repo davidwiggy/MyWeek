@@ -1,0 +1,27 @@
+package com.example.myweek;
+
+import android.app.ListActivity;
+import android.os.Bundle;
+import android.widget.ListView;
+
+public class ManageClients extends ListActivity
+{
+	static final String[] thu = new String[]
+	{
+		"John Schildt", "JavaScript Pollack", "Prentice Quiffffffffffffffffffffffff=gley",
+		"Bronson Oriented", "Richard Bangs", "Pasquale Scaturro", "SLDFDSFDSF", "SDfdfsdfd", "SDFDSFDF1", "SDFSDFDFS", "SDFDSF"
+	};
+	
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {         
+
+       super.onCreate(savedInstanceState);    
+       setContentView(R.layout.manage_clients);
+       
+       ListView clients = (ListView)findViewById(R.id.tuesdaylist);
+       
+
+   }
+	
+}

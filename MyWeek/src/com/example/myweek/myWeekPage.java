@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 public class myWeekPage extends ListActivity 
 {
@@ -31,10 +33,14 @@ public class myWeekPage extends ListActivity
 		"Bronson Oriented", "Richard Bangs", "Pasquale Scaturro", "SLDFDSFDSF", "SDfdfsdfd", "SDFDSFDF1", "SDFSDFDFS", "SDFDSF"
 	};
 	
-	Button btnBack;
+	private Button btnBack;
+	private Button btnMyDay;
+	private Spinner spinnerSelection;
+	private String spinnerText;
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) 
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.myweekpage);
         
@@ -46,7 +52,8 @@ public class myWeekPage extends ListActivity
         //Set up ArrayAdaptor to display the current patients
         setListAdapter(new ArrayAdapter<String>
         	(this, R.layout.listviewsize, CHOICES));
-        
+ 
+       
        tuesdaylistview.setAdapter(new ArrayAdapter<String>(this,
         	   R.layout.listviewsize, testing));
        wednesdaylistview.setAdapter(new ArrayAdapter<String>(this,
@@ -59,10 +66,41 @@ public class myWeekPage extends ListActivity
        //Setting up the Back btn
        btnBack = (Button)findViewById(R.id.btnBackMyWeekPage);
        setBtnBack();
+       
+       //Setting up the GoToDay btn
+       btnMyDay = (Button)findViewById(R.id.btnGoToDayMyWeekPage);
+       setBtnGoToDay();
         
+       //Setting up the spinner
+       spinnerSelection = (Spinner)findViewById(R.id.spinnerDaySelectionMyWeekPage);
+      
+      
     }//End of On Create
 
+    //Setting up the Click Listener to go to My Day
+	private void setBtnGoToDay()
+    {
+        btnMyDay.setOnClickListener
+        (
+        	new View.OnClickListener() 
+        	{
+        		public void onClick(View v)
+        		{
+        			spinnerText = spinnerSelection.getSelectedItem().toString();
+        			if(spinnerText.equals("Select A Day"))
+        				Toast.makeText(myWeekPage.this, "You must select a day first.", Toast.LENGTH_LONG).show();
+        			else
+        			{
+        				Intent startMyDayActivity = new Intent(myWeekPage.this, MyDay.class);
+        				startMyDayActivity.putExtra("day_name", spinnerText);
+        				startActivity(startMyDayActivity);
+        			}
+        		}
+        	});
+    }
     
+    
+    //Setting up the Click Listener for the back button
 	private void setBtnBack()
     {
         btnBack.setOnClickListener

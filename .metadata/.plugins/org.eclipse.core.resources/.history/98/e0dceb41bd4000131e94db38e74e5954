@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is the layout for the Manage Clients Page. This page lets the user add, delete or schedule patients. -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"     
+    android:background="@color/Gunmetal">
+
+        <TextView
+            android:id="@+id/manageClientsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/BabyBlue"
+            android:textSize="24sp"
+	        android:text="@string/lblManagePatients" />
+
+       <TextView
+           android:id="@+id/txtlblCurrentPatients"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/manageClientsTitle"
+           android:layout_marginTop="16dp"
+           android:text="Current Patients"
+           android:textColor="@color/BabyBlue" />
+           <View
+        	android:id="@+id/lineManageClients"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/txtlblCurrentPatients"
+            android:background="@android:color/black" />
+      <LinearLayout 
+          android:id="@+id/listViewHolderManageClients"
+          android:layout_below="@id/lineManageClients"
+          android:layout_width="match_parent"
+          android:layout_height="220dip">
+          
+	      <ListView
+	           android:id="@android:id/list"
+	           android:layout_width="match_parent"
+	           android:layout_height="match_parent">
+          </ListView>
+          
+       </LinearLayout>
+
+       <EditText
+           android:id="@+id/enter_patient_name"
+           android:layout_width="150dip"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/listViewHolderManageClients"
+           android:layout_marginTop="30dip"
+           android:hint="@string/edittextlblPatientNameManageClients"
+           android:background="@layout/edit_text_design"
+           android:textSize="14sp"
+           android:textColor="@color/BabyBlue"
+           android:inputType="textMultiLine" >
+
+           <requestFocus />
+       </EditText>
+
+	    <Spinner
+	        android:id="@+id/spinnerManageClients"
+	        android:layout_width="wrap_content"
+	        android:layout_height="40dip"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/listViewHolderManageClients"
+	        android:layout_marginTop="20dip"
+	        android:entries="@array/days_array" />
+	    
+	    <Button
+	        android:id="@+id/btnDeleteManageClients"
+	        android:background="@layout/buttonlayout"
+	        android:layout_below="@id/spinnerManageClients"
+	        android:layout_marginTop="10dip"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:text="@string/btnlblDeleteManageClients"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+	    
+	    <Button
+	        android:id="@+id/btnScheduleManageClients"
+	        android:background="@layout/buttonlayout"
+	        android:layout_below="@id/spinnerManageClients"
+	        android:layout_alignParentRight="true"
+	        android:layout_marginTop="10dip"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:text="@string/btnlblScheduleManageClients"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+	    
+	    <Button
+	        android:id="@+id/btnBackManageClients"
+	        android:background="@layout/buttonlayout"
+	        android:layout_below="@id/btnScheduleManageClients"
+	        android:layout_alignParentRight="true"
+	        android:layout_marginTop="10dip"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:text="@string/btnlblBackManageClients"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+	    
+	    <Button
+	        android:id="@+id/btnAddManageClients"
+	        android:background="@layout/buttonlayout"
+	        android:layout_below="@id/btnDeleteManageClients"
+	        android:layout_marginTop="10dip"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:text="@string/btnlblAddManageClients"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+       
+</RelativeLayout>

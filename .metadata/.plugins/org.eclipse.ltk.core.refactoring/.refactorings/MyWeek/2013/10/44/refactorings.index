@@ -14,3 +14,15 @@
 1382934507056	Delete element
 1382934684305	Delete element
 1382934985120	Delete element
+1383013356586	Extracts string 'Back' into R.string.btnBackManageClients
+1383013380946	Extracts string 'Back' into R.string.btnlblBackManageClients
+1383013422510	Extracts string 'Add' into R.string.btnlblAddManageClients
+1383013439908	Extracts string 'Schedule' into R.string.btnlblScheduleManageClients
+1383013458867	Extracts string 'Delete' into R.string.btnlblDeleteManageClients
+1383013489686	Extracts string 'Enter Patient Name' into R.string.edittextlblPatientNameManageClients
+1383066696261	Extracts string 'Manage Patients' into R.string.lblManagePatients
+1383066735037	Extracts string 'Current Patients' into R.string.lblCurrentPatientsManageClients
+1383071390127	Extracts string 'Add' into R.string.btnlblAddMyDayPage
+1383071407339	Extracts string 'Move' into R.string.btnlblMoveMyDayPage
+1383071424150	Extracts string 'Delete' into R.string.btnlblDeleteMyDayPage
+1383071438347	Extracts string 'Back' into R.string.btnlblBackMyDayPage

@@ -1,4 +1,5 @@
-<!-- Check the android Manifest for the added code to keep layout type landscape -->
+<!-- This is the My Week Page. This activity lets the user see the week schedule and gives access to the
+     My day activity. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -190,7 +191,7 @@
 	        android:textSize="5pt"
 	        android:textStyle="bold" />
 	    <Spinner
-	        android:id="@+id/spinner1"
+	        android:id="@+id/spinnerDaySelectionMyWeekPage"
 	        android:layout_width="0dp"
 	        android:layout_height="40dip"
 	        android:entries="@array/days_array"

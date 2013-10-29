@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"     
+    android:background="@color/Gunmetal">
+
+        <TextView
+            android:id="@+id/manageClientsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/BabyBlue"
+            android:textSize="24sp"
+	        android:text="Manage Patients" />
+
+       <TextView
+           android:id="@+id/textView1"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/manageClientsTitle"
+           android:layout_marginTop="16dp"
+           android:text="Current Patients"
+           android:textColor="@color/BabyBlue" />
+       
+      <ListView
+           android:id="@android:id/list"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentLeft="true"
+           android:layout_below="@+id/textView1"
+           android:layout_above="@+id/enter_patient_name" >
+       </ListView>
+    
+       <EditText
+			android:id="@+id/enter_patient_name"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:hint="Enter Patient Name"
+			android:inputType="textPersonName">
+			<requestFocus></requestFocus>
+	  </EditText>
+       
+</RelativeLayout>

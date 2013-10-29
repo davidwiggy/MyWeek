@@ -52,5 +52,17 @@
         <string name="btn_txt_lbl_Totals_Main">Totals</string>
         <string name="btn_lbl_Finished_Main">Finished</string>
         <string name="btn_lbl_manage_clients_main">Manage Clients</string>
+        <string name="btnBackManageClients">Back</string>
+        <string name="btnlblBackManageClients">Back</string>
+        <string name="btnlblAddManageClients">Add</string>
+        <string name="btnlblScheduleManageClients">Schedule</string>
+        <string name="btnlblDeleteManageClients">Delete</string>
+        <string name="edittextlblPatientNameManageClients">Enter Patient Name</string>
+        <string name="lblManagePatients">Manage Patients</string>
+        <string name="lblCurrentPatientsManageClients">Current Patients</string>
+        <string name="btnlblAddMyDayPage">Add</string>
+        <string name="btnlblMoveMyDayPage">Move</string>
+        <string name="btnlblDeleteMyDayPage">Delete</string>
+        <string name="btnlblBackMyDayPage">Back</string>
    
 </resources>
