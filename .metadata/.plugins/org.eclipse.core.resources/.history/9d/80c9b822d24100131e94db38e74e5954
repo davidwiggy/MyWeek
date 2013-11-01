@@ -50,6 +50,11 @@
           	    <category android:name="android.intent.category.DEFAULT"/>
           	</intent-filter>
           	</activity>
+          	
+        <provider
+	        android:name="com.example.myweek.PatientsDatabase"
+	        android:authorities="com.example.myweek.PatientsDatabase"
+	        android:exported="false"/>  	
     </application>
 
 </manifest>
