@@ -24,7 +24,17 @@
            android:layout_marginTop="16dp"
            android:text="@string/lblCurrentPatientsManageClients"
            android:textColor="@color/BabyBlue" />
-           <View
+       <TextView 
+           android:id="@+id/txtlblLongClickHint"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/manageClientsTitle"
+           android:layout_marginTop="16dp"
+           android:layout_alignParentRight="true"
+           android:text="(Hold Patient name to Delete)"
+           android:textColor="@color/BabyBlue"/>
+       
+       <View
         	android:id="@+id/lineManageClients"
             android:layout_width="match_parent"
             android:layout_height="1dp"

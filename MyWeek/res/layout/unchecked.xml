@@ -2,9 +2,11 @@
 
 <!-- This is a custom xml file to modify the checkboxes look -->
 
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_checked="false">
+        <shape>
+            <gradient android:startColor="@color/BabyBlue" android:endColor="@color/BabyBlue" android:angle="-90"/>
+        </shape>
+    </item>
+</selector>
 
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
- android:shape="rectangle">
-<stroke android:width="400px"  />
-<size android:height="200dp" android:width="200dp"/>
-</shape>

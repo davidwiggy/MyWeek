@@ -5,7 +5,7 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 <item android:state_checked="true"
-android:drawable="@layout/checked" />
+android:drawable="@layout/checked"/>
 <item android:state_pressed="true"
  android:drawable="@layout/checked" />
 <item android:drawable="@layout/unchecked" />

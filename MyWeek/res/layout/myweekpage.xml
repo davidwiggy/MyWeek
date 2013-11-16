@@ -196,5 +196,20 @@
 	        android:layout_height="40dip"
 	        android:entries="@array/days_array"
 	        android:layout_weight=".90" />
-    </LinearLayout> 
+    
+    
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnClearScheduleMyWeek"
+        android:layout_width="200dip"
+        android:layout_height="35dip"
+        android:layout_below="@+id/buttonHolder"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:background="@layout/buttonlayout"
+        android:text="@string/btnClearScheduleMyWeekPage"
+        android:textSize="5pt"
+        android:textStyle="bold" />
+ 
 </RelativeLayout>

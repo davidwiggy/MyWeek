@@ -40,7 +40,7 @@ public class MyWeekMainActivity extends Activity {
 		});
 		
 	}
-
+    
 	private void setMyWeekOnClickListener()
     {
         btnMyWeekPageStarter.setOnClickListener
@@ -54,6 +54,5 @@ public class MyWeekMainActivity extends Activity {
         		}
         	});
     }
-
     
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is a custom xml file to modify the checkboxes look -->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_checked="true">
+        <shape>
+            <gradient android:startColor="@color/Gunmetal" android:endColor="@color/yellow2" android:angle="-90"/>
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <gradient android:startColor="#000000" android:endColor="#FFFFFF" android:angle="-90"/>
+        </shape>
+    </item>
+</selector>

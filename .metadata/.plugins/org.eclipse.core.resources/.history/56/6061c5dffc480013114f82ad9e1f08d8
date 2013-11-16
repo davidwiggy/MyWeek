@@ -1,0 +1,175 @@
+package dbmanager;
+
+import java.io.IOException;
+
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.UriMatcher;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.util.Log;
+
+public class PatientsDatabaseProvider extends ContentProvider 
+{
+	
+	private static String AUTHORITY = "com.example.myweek.PatientsDatabaseProvider";
+	public static final Uri TABLE_URI = Uri.parse("content://" + AUTHORITY +
+													"/" + Constants.TABLE_NAME);
+	public static final Uri ONE_REC_URI = Uri.parse("content://" + AUTHORITY +
+													 "/" + Constants.TABLE_NAME + "/row");
+	
+	private DataBaseHelper myHelper;
+	private SQLiteDatabase myDB;
+	
+	private static final int PATIENT_LIST = 0;
+	private static final int PATIENT_RECORD = 1;
+	private static final UriMatcher myURIMatcher = buildUriMatcher();
+	
+	static UriMatcher buildUriMatcher()
+	{
+		UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+		matcher.addURI(AUTHORITY, Constants.TABLE_NAME, PATIENT_LIST);
+		matcher.addURI(AUTHORITY, Constants.TABLE_NAME + "/row", PATIENT_RECORD);
+		
+		return matcher;
+	}//End of buildUriMatcher
+
+	@Override
+	public boolean onCreate() 
+	{ 
+		return true;
+	}//End of onCreate
+
+	@Override
+	public String getType(Uri uri)
+	{
+		return null;
+	}//End of getType
+	
+	@Override
+	public Cursor query(Uri uri, String[] projectionIn, String Selection,
+						String[] selectionArgs, String sortOrder)
+	{
+		
+		if(myHelper == null)
+			initializeDB();
+		
+		Cursor myCursor = null;
+		switch (myURIMatcher.match(uri))
+		{
+			case PATIENT_LIST:
+				myCursor = myDB.query(Constants.TABLE_NAME, projectionIn, null, null, null, null, null);
+				break;
+			case PATIENT_RECORD:
+				myCursor = myDB.query(Constants.TABLE_NAME,
+						              projectionIn, 
+						              Constants.KEY_ID, 
+						              selectionArgs, 
+						              null, null, null, null);
+				if(myCursor != null && myCursor.getCount() > 0)
+					myCursor.moveToFirst();
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown Uri:   " + uri);
+		}//End of Switch Statement
+		
+		//Update the cursor and report changes
+		myCursor.setNotificationUri(getContext().getContentResolver(), uri);
+		
+		return myCursor;
+	}//End of query
+	
+	@Override
+	public int delete(Uri uri, String selection, String[] selectionArgs)
+	{
+		if(myHelper == null)
+			initializeDB();
+		
+		int count = myDB.delete(Constants.TABLE_NAME, Constants.KEY_ID + "=?", 
+								new String[]
+								{
+									Long.toString(ContentUris.parseId(uri))
+								});
+		if (count > 0)
+			getContext().getContentResolver().notifyChange(uri, null);
+		
+		return count;
+	}//End of Delete 
+	
+	@Override
+	public Uri insert(Uri uri, ContentValues values)
+	{
+
+		if (myHelper == null)
+			initializeDB();
+
+		
+		long id = 0;
+		values.remove(Constants.KEY_ID);
+
+		try
+		{
+			id = myDB.insertOrThrow(Constants.TABLE_NAME, null, values);
+		}
+		catch (SQLException ex)
+		{
+			Log.d("PatientsDatabase", "Unable to insert record. "+ ex.getStackTrace());
+		}
+
+		if (id >= 0)
+		{
+			getContext().getContentResolver().notifyChange(uri, null);
+		}
+
+		return ContentUris.withAppendedId(uri, id);
+	}//END insert
+	
+	
+	@Override
+	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
+	{
+		if (myHelper == null)
+			initializeDB();
+		
+		int count = myDB.update(Constants.TABLE_NAME, values, 
+								Constants.KEY_ID + "=?",
+								new String[]
+								{
+									Long.toString(ContentUris.parseId(uri))
+				
+								});
+		if (count > 0)
+		{
+			getContext().getContentResolver().notifyChange(uri, null);
+		}
+		return count;
+	}//END update
+	
+	//Method to set up the DB initially.  This is called to create the DB
+	//by any of the CRUD methods, which ensures that it does happen until
+	//the first use of the DB.  Therefore, no activity waits for this to happen.
+	public void initializeDB()
+	{
+		//First, instantiate the DB helper, then create the DB.
+		myHelper = new DataBaseHelper(getContext());
+		try
+		{
+			//Use the DataBaseHelper object to create the actual DB.
+			//If the DB does not exist, it is created and sourced from
+			//an assets file. If it does, it is just instantiated and returned.
+			myDB = myHelper.createDatabase();
+		}
+		catch (IOException e)
+		{
+			Log.d("In ContentProvider", "Call to createDatabase failed");
+			e.printStackTrace();
+		}//END DB initialization
+	
+	
+	
+	}
+	
+}//End of PatientsDatabase Class

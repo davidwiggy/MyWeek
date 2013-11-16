@@ -1,0 +1,20 @@
+package dbmanager;
+
+public class Constants {
+	
+	public static final int DATABASE_VERSION = 1;
+	public static final String DATABASE_NAME = "Patientsdb";
+	public static final String TABLE_NAME = "PatientsTable";
+	public static final String DATABASE_PATH = "data/data/com.example.myweek/databases";
+	public static final String KEY_ID = "_id";
+	public static final String COLUMN_PATIENT_NAME = "Name";
+	public static final String COLUMN_DAY = "Day";
+	public static final String COLUMN_NOTES = "Notes";
+	
+	public static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
+						+ TABLE_NAME + " (" + KEY_ID + " integer primary key autoincrement, "
+						+ COLUMN_PATIENT_NAME + " text, " + COLUMN_DAY + " text, "
+						+ COLUMN_NOTES + " text);";
+	
+
+}

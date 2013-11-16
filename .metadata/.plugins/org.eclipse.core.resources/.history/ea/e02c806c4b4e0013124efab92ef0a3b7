@@ -1,0 +1,181 @@
+package com.example.myweek;
+
+import java.util.ArrayList;
+
+import dbmanager.Constants;
+import dbmanager.PatientsDatabaseProvider;
+import android.os.Bundle;
+import android.app.ListActivity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+public class myWeekPage extends ListActivity 
+{
+	
+	private Button btnBack, btnMyDay, btnClear;
+	private Spinner spinnerSelection;
+	private String spinnerText;
+	private Cursor cursor;
+	
+	private String[] monday, tuesday, wednesday, thursday, friday;
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) 
+    {
+       super.onCreate(savedInstanceState);
+       setContentView(R.layout.myweekpage);
+
+       ListView tuesdaylistview = (ListView)findViewById(R.id.tuesdaylist);
+       ListView wednesdaylistview = (ListView)findViewById(R.id.wednesdaylist);
+       ListView thursdaylistview = (ListView)findViewById(R.id.thursdaylist);
+       ListView fridaylistview = (ListView)findViewById(R.id.fridaylist);
+
+       getCursor();
+   
+        //Set up ArrayAdaptor to display the current patients
+        setListAdapter(new ArrayAdapter<String>
+        	(this, R.layout.listviewsize, monday));
+       tuesdaylistview.setAdapter(new ArrayAdapter<String>(this,
+        	   R.layout.listviewsize, tuesday));
+       wednesdaylistview.setAdapter(new ArrayAdapter<String>(this,
+    		   R.layout.listviewsize, wednesday));
+       thursdaylistview.setAdapter(new ArrayAdapter<String>(this,
+    		   R.layout.listviewsize, thursday));
+       fridaylistview.setAdapter(new ArrayAdapter<String>(this,
+    		   R.layout.listviewsize, friday));
+       
+     
+       btnBack = (Button)findViewById(R.id.btnBackMyWeekPage);
+       btnMyDay = (Button)findViewById(R.id.btnGoToDayMyWeekPage);
+       btnClear = (Button)findViewById(R.id.btnClearScheduleMyWeek);
+
+       btnBack.setOnClickListener(myButtonListener);
+       btnMyDay.setOnClickListener(myButtonListener);
+       btnClear.setOnClickListener(myButtonListener);
+       
+       //Setting up the spinner
+       spinnerSelection = (Spinner)findViewById(R.id.spinnerDaySelectionMyWeekPage);
+      
+      
+    }//End of On Create
+
+    
+	private OnClickListener myButtonListener = new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			switch (v.getId())
+			{
+				case R.id.btnBackMyWeekPage:		Intent startMainActivity = new Intent(myWeekPage.this, MyWeekMainActivity.class);
+	    											startActivity(startMainActivity);
+	    											break;
+				
+				case R.id.btnGoToDayMyWeekPage: 	spinnerText = spinnerSelection.getSelectedItem().toString();
+	    											if(spinnerText.equals("Select A Day"))
+	    												Toast.makeText(myWeekPage.this, "You must select a day first.", Toast.LENGTH_LONG).show();
+	    											else
+	    											{
+	    												Intent startMyDayActivity = new Intent(myWeekPage.this, MyDay.class);
+	    												startMyDayActivity.putExtra("day_name", spinnerText);
+	    												startActivity(startMyDayActivity);
+    											    }
+	    											break;
+	    											
+				case R.id.btnClearScheduleMyWeek:	clearSchedule();
+			}
+		}
+
+
+	};
+    
+	
+	private void clearSchedule() 
+	{
+			
+			
+	}
+	
+    private void getCursor()
+    {
+    	String day = "Monday";
+    	String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
+    	
+    	String whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    	
+    	for(int x = 0; x < 5; x++)
+    	{
+    		cursor = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
+    			columns, whereClause, null, null);
+    		
+    		switch(x)
+    		{
+    			case 0:	loadArrays(x);
+    					day = "Tuesday";
+    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					break;
+    			case 1: loadArrays(x);
+    					day = "Wednesday";
+    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					break;
+    			case 2: loadArrays(x);
+    					day = "Thursday";
+    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					break;
+    			case 3: loadArrays(x);
+    					day = "Friday";
+    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					break;
+    			case 4: loadArrays(x);
+    					Log.d("IN", "Last");
+    					break;
+    		}	
+    	}
+    }//End of getCursor
+
+
+	private void loadArrays(int x)
+	{		
+		
+		ArrayList<String> names = new ArrayList<String>();
+		if(cursor.moveToFirst())
+		{
+			do
+			{
+				int ct = 0;
+				names.add(cursor.getString(ct));
+				ct++;
+			}while (cursor.moveToNext());
+		}
+
+		switch(x)
+		{
+
+			case 0:	monday = (String[]) names.toArray(new String[names.size()]);
+					names.clear();
+					break;
+			case 1: tuesday = (String[]) names.toArray(new String[names.size()]);
+					names.clear();
+					break;
+			case 2: wednesday = (String[]) names.toArray(new String[names.size()]);
+					names.clear();
+					break;
+			case 3: thursday = (String[]) names.toArray(new String[names.size()]);
+					names.clear();
+					break;
+			case 4: friday = (String[]) names.toArray(new String[names.size()]);
+					names.clear();
+					break;
+		}
+	}//End of loadArrays
+	
+	
+}//End of Class

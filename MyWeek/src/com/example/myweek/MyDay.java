@@ -1,27 +1,39 @@
 package com.example.myweek;
 
+import dbmanager.Constants;
+import dbmanager.PatientsDatabaseProvider;
+import android.annotation.SuppressLint;
 import android.app.ListActivity;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MyDay extends ListActivity
+@SuppressLint("NewApi")
+public class MyDay extends ListActivity 
+					implements LoaderCallbacks<Cursor>
 {
-	static final String[] thu = new String[]
-	{
-		"John Schildt", "JavaScript Pollack", "Prentice Quiffffffffffffffffffffffff=gley",
-		"Bronson Oriented", "Richard Bangs", "Pasquale Scaturro", "SLDFDSFDSF", "SDfdfsdfd", "SDFDSFDF1", "SDFSDFDFS", "SDFDSF"
-	};
 	
+	private SimpleCursorAdapter myAdapter, spinnerAdapter;
+	private Spinner spinner;
 	private Button btnBack;
 	private String day;
 	private TextView title;
+	private Cursor spinCur;
 	
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     public void onCreate(Bundle savedInstanceState) 
     {         
 
@@ -36,29 +48,82 @@ public class MyDay extends ListActivity
        title = (TextView)findViewById(R.id.titleDay);
        title.setText(day);
        
-       //ListView clients = (ListView)findViewById(R.id.lvManageClients);
+       //Setting up the Spinner with a list from the database
+       spinner = (Spinner)findViewById(R.id.spinnerPatientSelectionMyDay);
+       setUpSpinner();
        
-       setListAdapter(new ArrayAdapter<String>
-   			(this, R.layout.checkboxes_layout, thu));
+       String[] from = new String[] { Constants.COLUMN_PATIENT_NAME };
+       
+       int[] to = new int[] { R.id.checkbox1 };
+       
+       myAdapter = new SimpleCursorAdapter(this, R.layout.checkboxes_layout, null, from, to, 0);
+       setListAdapter(myAdapter);
+       
+       getLoaderManager().initLoader(1, null, this);
+       registerForContextMenu(getListView());
        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-       getListView().setTextFilterEnabled(true);
+    // getListView().setTextFilterEnabled(true);
+       
+       
        btnBack = (Button)findViewById(R.id.btnBackMyDay);
-       setBtnBack();
+       btnBack.setOnClickListener(myButtonListener);
+       
 
-   }
+
+   }//End of On Create
     
-	private void setBtnBack()
-    {
-        btnBack.setOnClickListener
-        (
-        	new View.OnClickListener() 
-        	{
-       		public void onClick(View v)
-        		{
-        			Intent startMyWeekPageActivity = new Intent(MyDay.this, myWeekPage.class);
-        			startActivity(startMyWeekPageActivity);
-        		}
-        	});
-    }
+	private void setUpSpinner() 
+	{
+		String[] projection = new String[] { Constants._id, Constants.COLUMN_PATIENT_NAME };
+		
+		spinCur = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
+				projection, null, null, null);
+		
+		String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
+		int[] to = new int[] { R.id.spinnerPatientSelectionMyDay };
+		
+		spinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item,
+							spinCur, columns, to, 0);
+		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		spinner.setAdapter(spinnerAdapter);
+	}
+
+	private OnClickListener myButtonListener = new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			switch (v.getId())
+			{
+				case R.id.btnBackMyDay:		Intent startMyWeekPageActivity = new Intent(MyDay.this, myWeekPage.class);
+    										startActivity(startMyWeekPageActivity);
+			}
+		}
+	}; 
+    
+
+	@SuppressLint("NewApi")
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) 
+	{
+    	String whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+		
+		CursorLoader cursorLoader = new CursorLoader(this,
+				PatientsDatabaseProvider.TABLE_URI, null, whereClause, null, null);
+		return cursorLoader;
+	}
+
+	@SuppressLint("NewApi")
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor myCursor) {
+		myAdapter.swapCursor(myCursor);
+		
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		myAdapter.swapCursor(null);
+		
+	}
 }
 	

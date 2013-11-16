@@ -1,0 +1,209 @@
+package com.example.myweek;
+
+import java.util.ArrayList;
+
+import dbmanager.Constants;
+import dbmanager.PatientsDatabaseProvider;
+import android.os.Bundle;
+import android.app.ListActivity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+public class myWeekPage extends ListActivity 
+{
+	static final String[] CHOICES = new String[]
+	{
+		"Read directions",
+		"Highest Scores",
+		"Play Game",
+		"Quit"
+	};
+	static final String[] testing = new String[]
+	{
+		"David Wiggins", "Cassie Owens", "Debbie Downer"				
+	};
+	static final String[] wed = new String[]
+	{
+		"David Wiggins", "Ronnie Wiggins", "Ronnald WestBrock", "John Henry", "Westbrock Williams", "Shithead maGee"
+	};
+	static final String[] thu = new String[]
+	{
+		"John Schildt", "JavaScript Pollack", "Prentice Quiffffffffffffffffffffffff=gley",
+		"Bronson Oriented", "Richard Bangs", "Pasquale Scaturro", "SLDFDSFDSF", "SDfdfsdfd", "SDFDSFDF1", "SDFSDFDFS", "SDFDSF"
+	};
+	
+	private Button btnBack;
+	private Button btnMyDay;
+	private Spinner spinnerSelection;
+	private String spinnerText;
+	private Cursor cursor;
+	
+	private String[] monday, tuesday, wednesday, thursday, friday;
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) 
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.myweekpage);
+            
+       ListView tuesdaylistview = (ListView)findViewById(R.id.tuesdaylist);
+       ListView wednesdaylistview = (ListView)findViewById(R.id.wednesdaylist);
+       ListView thursdaylistview = (ListView)findViewById(R.id.thursdaylist);
+       ListView fridaylistview = (ListView)findViewById(R.id.fridaylist);
+        
+        //Set up ArrayAdaptor to display the current patients
+        setListAdapter(new ArrayAdapter<String>
+        	(this, R.layout.listviewsize, CHOICES));
+ 
+       
+       tuesdaylistview.setAdapter(new ArrayAdapter<String>(this,
+        	   R.layout.listviewsize, testing));
+       wednesdaylistview.setAdapter(new ArrayAdapter<String>(this,
+    		   R.layout.listviewsize, wed));
+       thursdaylistview.setAdapter(new ArrayAdapter<String>(this,
+    		   R.layout.listviewsize, wed));
+       fridaylistview.setAdapter(new ArrayAdapter<String>(this,
+    		   R.layout.listviewsize, thu));
+       
+       //Setting up the Back btn
+       btnBack = (Button)findViewById(R.id.btnBackMyWeekPage);
+       setBtnBack();
+       
+       //Setting up the GoToDay btn
+       btnMyDay = (Button)findViewById(R.id.btnGoToDayMyWeekPage);
+       setBtnGoToDay();
+        
+       //Setting up the spinner
+       spinnerSelection = (Spinner)findViewById(R.id.spinnerDaySelectionMyWeekPage);
+      
+      
+    }//End of On Create
+
+    
+    
+    private void getCursor()
+    {
+    	int test = 1;
+    	
+    	String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
+    	String where = Constants.COLUMN_DAY.toString() + "=?";
+    	String[] whereCondition = new String[] { "Monday" };
+    	
+    	for(int x = 0; x < 5; x++)
+    	{
+    		cursor = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
+    			columns, where, whereCondition, null);
+    		switch(x)
+    		{
+    			case 0:	loadArrays(monday);
+    					whereCondition[0] = "Tuesday";
+    					break;
+    			case 1: loadArrays(tuesday);
+    					whereCondition[0] = "Wednesday";
+    					break;
+    			case 2: loadArrays(wednesday);
+    					whereCondition[0] = "Thursday";
+    					break;
+    			case 3: loadArrays(thursday);
+    					whereCondition[0] = "Friday";
+    					break;
+    			case 4: loadArrays(friday);
+    					break;
+    		}
+    		
+    	}
+    }//End of getCursor
+
+
+	private void loadArrays(String[] day)
+	{
+		ArrayList<String> names = new ArrayList<String>();
+		if(cursor.moveToFirst())
+		{
+			do
+			{
+				int ct = 0;
+				names.add(cursor.getString(ct));
+				ct++;
+			}while (cursor.moveToNext());
+		}
+		
+		day = (String[]) names.toArray(new String[names.size()]);
+	}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //Setting up the Click Listener to go to My Day
+	private void setBtnGoToDay()
+    {
+        btnMyDay.setOnClickListener
+        (
+        	new View.OnClickListener() 
+        	{
+        		public void onClick(View v)
+        		{
+        			spinnerText = spinnerSelection.getSelectedItem().toString();
+        			if(spinnerText.equals("Select A Day"))
+        				Toast.makeText(myWeekPage.this, "You must select a day first.", Toast.LENGTH_LONG).show();
+        			else
+        			{
+        				Intent startMyDayActivity = new Intent(myWeekPage.this, MyDay.class);
+        				startMyDayActivity.putExtra("day_name", spinnerText);
+        				startActivity(startMyDayActivity);
+        			}
+        		}
+        	});
+    }
+    
+    
+    //Setting up the Click Listener for the back button
+	private void setBtnBack()
+    {
+        btnBack.setOnClickListener
+        (
+        	new View.OnClickListener() 
+        	{
+        		public void onClick(View v)
+        		{
+        			Intent startMainActivity = new Intent(myWeekPage.this, MyWeekMainActivity.class);
+        			startActivity(startMainActivity);
+        		}
+        	});
+    }
+    
+}
