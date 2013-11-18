@@ -62,9 +62,11 @@
         <string name="lblManagePatients">Manage Patients</string>
         <string name="lblCurrentPatientsManageClients">Current Patients</string>
         <string name="btnlblAddMyDayPage">Add</string>
-        <string name="btnlblMoveMyDayPage">Move</string>
+        <string name="btnlblRescheduleMyDayPage">Reschedule Patient</string>
         <string name="btnlblDeleteMyDayPage">Delete</string>
         <string name="btnlblBackMyDayPage">Back</string>
         <string name="btnClearScheduleMyWeekPage">Clear Schedule</string>
+        <string name="lblspinnerSelectPatientMyDay">(Select a Patient to add to the day.)</string>
+        <string name="btnlblChangeDay">Change Day</string>
    
 </resources>

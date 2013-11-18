@@ -26,15 +26,14 @@ import android.widget.Toast;
 
 public class ManageClients extends ListActivity
 {
-	String[] namesArr;
-	ArrayList<String> selectedBoxes;
+	private String[] namesArr;
+	private ArrayList<String> selectedBoxes;
 	private ArrayAdapter<String> myAdapter;
 	private Button btnBack, btnAdd, btnDeleteAll, btnSchedule;
-	EditText patientName;
-	ListView lv;
-	Spinner spinner;
-	TextView spinnerSelection;
-	CheckedTextView cb;
+	private EditText patientName;
+	private ListView lv;
+	private Spinner spinner;
+	private TextView spinnerSelection;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) 
@@ -49,7 +48,6 @@ public class ManageClients extends ListActivity
        patientName = (EditText)findViewById(R.id.enter_patient_name);
        lv = getListView();
        spinner = (Spinner)findViewById(R.id.spinnerManageClients);
-       cb = (CheckedTextView)findViewById(R.id.checkbox1);
        
        //Set up listener for the buttons
        btnBack      = (Button)findViewById(R.id.btnBackManageClients);
@@ -116,7 +114,24 @@ public class ManageClients extends ListActivity
 		 else
 		 {
 			 ContentValues value = new ContentValues();
-			 value.put(Constants.COLUMN_DAY, sel);
+			 if(sel.equals("Clear Schedule"))
+			 {
+				 value.put(Constants.COLUMN_MONDAY, 0);
+			 	 value.put(Constants.COLUMN_TUESDAY, 0);
+			 	 value.put(Constants.COLUMN_WEDNESDAY, 0);
+			 	 value.put(Constants.COLUMN_THURSDAY, 0);
+			 	 value.put(Constants.COLUMN_FRIDAY, 0);
+			 }
+			 else if(sel.equals("Monday"))
+				 value.put(Constants.COLUMN_MONDAY, 1);
+			 else if(sel.equals("Tuesday"))
+				 value.put(Constants.COLUMN_TUESDAY, 1);
+			 else if(sel.equals("Wednesday"))
+				 value.put(Constants.COLUMN_WEDNESDAY, 1);
+			 else if(sel.equals("Thursday"))
+				 value.put(Constants.COLUMN_THURSDAY, 1);
+			 else if(sel.equals("Friday"))
+				 value.put(Constants.COLUMN_FRIDAY, 1);
 			 
 			 for(int x = 0; x < selectedNames.length; x++)
 			 {
@@ -125,6 +140,7 @@ public class ManageClients extends ListActivity
 						 value, whereClause, null);
 			 }
 			 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
+
 		 }//End of Condition
 
 	}//End of  Schedule Patients
@@ -137,7 +153,8 @@ public class ManageClients extends ListActivity
 
 				@Override
 				public void onItemSelected(AdapterView<?> arg0, View view,
-						int arg2, long arg3) {
+						int arg2, long arg3) 
+				{
 					spinnerSelection = (TextView) view;
 				}
 
@@ -164,7 +181,6 @@ public class ManageClients extends ListActivity
 					@Override
 					public void onClick(DialogInterface dialog, int which) 
 					{
-						// TODO Auto-generated method stub
 						Toast.makeText(ManageClients.this, "All patients deleted", Toast.LENGTH_LONG).show();
 						getContentResolver().delete(PatientsDatabaseProvider.TABLE_URI, null, null);
 						reloadList();

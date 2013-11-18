@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is the layout for the Manage Clients Page. This page lets the user add, delete or schedule patients. -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"     
+    android:background="@color/Gunmetal">
+
+        <TextView
+            android:id="@+id/titleDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/BabyBlue"
+            android:textSize="24sp" />
+
+       <TextView
+           android:id="@+id/txtlblCurrentPatients"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/titleDay"
+           android:layout_marginTop="16dp"
+           android:text="@string/lblCurrentPatientsManageClients"
+           android:textColor="@color/BabyBlue" />
+           
+       <View
+        	android:id="@+id/lineMyDay"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/txtlblCurrentPatients"
+            android:background="@android:color/black" />
+      <LinearLayout 
+          android:id="@+id/listViewHolderMyDay"
+          android:layout_below="@id/lineMyDay"
+          android:layout_width="match_parent"
+          android:layout_height="220dip">
+          
+	      <ListView
+	           android:id="@android:id/list"
+	           android:layout_width="match_parent"
+	           android:layout_height="match_parent">
+          </ListView>
+          
+       </LinearLayout>
+
+       <TextView
+           android:id="@+id/txtlblSpinnerPatients"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/listViewHolderMyDay"
+           android:layout_marginTop="10dp"
+           android:text="Select a Patient to add to the day."
+           android:textColor="@color/BabyBlue" />
+      
+      
+  	    <Spinner
+	        android:id="@+id/spinnerPatientSelectionMyDay"
+	        android:layout_width="150dip"
+	        android:layout_height="40dip"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/txtlblSpinnerPatients"
+	        />
+	    
+	    <Button
+	        android:id="@+id/btnAddMyDay"
+	        android:background="@layout/buttonlayout"
+	        android:layout_below="@id/spinnerPatientSelectionMyDay"
+	        android:layout_marginTop="10dip"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:text="@string/btnlblAddMyDayPage"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+	    
+	    <Button
+	        android:id="@+id/btnDeletePatientsMyDay"
+	        android:background="@layout/buttonlayout"
+	        android:layout_below="@id/btnAddMyDay"
+	        android:layout_alignParentRight="true"
+	        android:layout_marginTop="10dip"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:text="@string/btnlblDeleteMyDayPage"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+	    
+	    <Button
+	        android:id="@+id/btnBackMyDay"
+	        android:background="@layout/buttonlayout"
+	        android:layout_below="@id/btnMovePatientsMyDay"
+	        android:layout_marginTop="10dip"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:text="@string/btnlblBackMyDayPage"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+
+	    <Button
+	        android:id="@+id/btnMovePatientsMyDay"
+	        android:layout_width="150dip"
+	        android:layout_height="35dip"
+	        android:layout_above="@+id/btnDeletePatientsMyDay"
+	        android:layout_alignParentRight="true"
+	        android:background="@layout/buttonlayout"
+	        android:text="@string/btnlblMoveMyDayPage"
+	        android:textSize="5pt"
+	        android:textStyle="bold" />
+
+	    <Spinner
+	        android:id="@+id/spinnerDaySelectionMyDay"
+	        android:layout_width="150dip"
+	        android:layout_height="40dip"
+	        android:layout_above="@+id/btnAddMyDay"
+	        android:layout_alignParentRight="true"
+	        android:entries="@array/days_array" />
+       
+</RelativeLayout>

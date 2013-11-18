@@ -1,0 +1,327 @@
+package com.example.myweek;
+
+import java.util.ArrayList;
+
+import dbmanager.Constants;
+import dbmanager.PatientsDatabaseProvider;
+import android.annotation.SuppressLint;
+import android.app.ListActivity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.CursorWrapper;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckedTextView;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MyDay extends ListActivity 
+{
+	
+	private String[] namesArr, scheduledNames;
+	private ArrayList<String> selectBoxes;
+	private ArrayAdapter<String> myAdapter;
+	private Spinner spinnerDay, spinnerPatient;
+	private Button btnBack, btnAdd, btnMove;
+	private String day;
+	private ListView lview;
+	private TextView title, spinnerPatientSelection, spinnerDaySelection;
+	
+	@Override
+    public void onCreate(Bundle savedInstanceState) 
+    {         
+
+       super.onCreate(savedInstanceState);    
+       setContentView(R.layout.mydaypage);
+       
+       //Getting passed in variables
+       Intent intent = getIntent();
+       day = intent.getStringExtra("day_name");
+       
+       //Load the List View
+       reloadList();
+       
+       //Setting up the Title TextView
+       title = (TextView)findViewById(R.id.titleDay);
+       title.setText(day);
+       
+       //Setting up the Spinner with a list from the database
+       spinnerPatient = (Spinner)findViewById(R.id.spinnerPatientSelectionMyDay);
+       spinnerDay     = (Spinner)findViewById(R.id.spinnerDaySelectionMyDay);
+       setUpDaySpinner();
+       setSpinnerPatientSelection();
+       setSpinnerDaySelection();
+       //Set up checkBoxes
+       lview = getListView();
+       getChecked();
+       
+       btnBack = (Button)findViewById(R.id.btnBackMyDay);
+       btnAdd  = (Button)findViewById(R.id.btnAddMyDay);
+       btnMove = (Button)findViewById(R.id.btnMovePatientsMyDay);
+       
+       btnBack.setOnClickListener(myButtonListener);
+       btnAdd .setOnClickListener(myButtonListener);
+       btnMove.setOnClickListener(myButtonListener);
+       
+
+
+   }//End of On Create
+    
+	private void setUpDaySpinner() 
+	{
+		
+		String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
+		
+		Cursor cursor = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
+				columns, null, null, null);
+				
+		ArrayList<String> names = new ArrayList<String>();
+		if(cursor.moveToFirst())
+		{
+			do
+			{
+				int ct = 0;
+				names.add(cursor.getString(ct));
+				ct++;
+			}while (cursor.moveToNext());
+		}
+		
+		namesArr = (String[]) names.toArray(new String[names.size()]);
+
+		spinnerPatient.setAdapter(new ArrayAdapter<String>(this, 
+				android.R.layout.simple_spinner_item, namesArr));
+	} 
+
+	private OnClickListener myButtonListener = new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			switch (v.getId())
+			{
+				case R.id.btnBackMyDay:			Intent startMyWeekPageActivity = new Intent(MyDay.this, myWeekPage.class);
+    											startActivity(startMyWeekPageActivity);
+    											break;
+				case R.id.btnAddMyDay:			addPatient();
+												break;
+				case R.id.btnMovePatientsMyDay: movePatients();
+												break;
+			}
+		}
+	}; 
+
+	//To add Patients to the day.
+	@SuppressLint("NewApi")
+	private void addPatient() 
+	{
+		String patientSelection = spinnerPatientSelection.getText().toString();
+		
+		if(patientSelection.isEmpty())
+			Toast.makeText(this, "You must select a Patient", Toast.LENGTH_SHORT).show();
+		
+		 ContentValues value = new ContentValues();
+		 if(day.equals("Monday"))
+			 value.put(Constants.COLUMN_MONDAY, 1);
+		 else if(day.equals("Tuesday"))
+			 value.put(Constants.COLUMN_TUESDAY, 1);
+		 else if(day.equals("Wednesday"))
+			 value.put(Constants.COLUMN_WEDNESDAY, 1);
+		 else if(day.equals("Thursday"))
+			 value.put(Constants.COLUMN_THURSDAY, 1);
+		 else if(day.equals("Friday"))
+			 value.put(Constants.COLUMN_FRIDAY, 1);
+		 
+		 String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + patientSelection + "'";
+		 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
+				 value, whereClause, null);
+	
+		 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
+		 reloadList();
+	}
+	
+	private void movePatients() 
+	{
+		 String selectionDay = (String) spinnerDaySelection.getText();
+		 
+		 String[] selectedNames;
+		 selectedNames = (String[]) selectBoxes.toArray(new String[selectBoxes.size()]);
+		 
+		 
+		 if(selectionDay.equals("Select A Day"))
+		 {
+			 Toast.makeText(this, "You must select a day first", Toast.LENGTH_SHORT).show();
+		 }
+		 else if(selectBoxes.isEmpty())
+		 {
+			 Toast.makeText(this, "You must select Patients first", Toast.LENGTH_SHORT).show();
+		 }
+		 else
+		 {
+			 String column = getPatientDay();
+			 
+			 ContentValues value = new ContentValues();
+			 if(selectionDay.equals("Monday"))
+			 {
+				 value.put(Constants.COLUMN_MONDAY, 1);
+				 value.put(column, 0);
+			 }	 
+			 else if(selectionDay.equals("Tuesday"))
+			 {
+				 value.put(Constants.COLUMN_TUESDAY, 1);
+				 value.put(column, 0);
+			 }
+			 else if(selectionDay.equals("Wednesday"))
+			 {
+				 value.put(Constants.COLUMN_WEDNESDAY, 1);
+				 value.put(column, 0);
+			 }
+			 else if(selectionDay.equals("Thursday"))
+			 {
+				 value.put(Constants.COLUMN_THURSDAY, 1);
+				 value.put(column, 0);
+			 }
+			 else if(selectionDay.equals("Friday"))
+			 {
+				 value.put(Constants.COLUMN_FRIDAY, 1);
+				 value.put(column, 0);
+			 }
+			 
+			 for(int x = 0; x < selectedNames.length; x++)
+			 {
+				 String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + selectedNames[x] + "'";
+				 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
+						 value, whereClause, null);
+			 }
+			 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
+			 reloadList();
+
+		 }//End of Condition
+
+	}//End of  Schedule Patients
+	
+	
+	//To get the selection from the spinner for Patient.
+	private void setSpinnerPatientSelection()
+	{
+		spinnerPatient.setOnItemSelectedListener(
+		    new AdapterView.OnItemSelectedListener() {
+
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View view,
+						int arg2, long arg3) 
+				{
+					spinnerPatientSelection = (TextView) view;
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) 
+				{
+					//Nothing needed here
+				}
+		    }
+		);
+	}
+	
+	//To get the selection from the spinner for Day.
+	
+	private void setSpinnerDaySelection()
+	{
+		spinnerDay.setOnItemSelectedListener(
+		    new AdapterView.OnItemSelectedListener() {
+
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View view,
+						int arg2, long arg3) 
+				{
+					spinnerDaySelection = (TextView) view;
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) 
+				{
+					//Nothing needed here
+				}
+		    }
+		);
+	}
+	
+	//Get all checked items
+	private void getChecked()
+	{
+		   lview.setOnItemClickListener(new ListView.OnItemClickListener() 
+	       {
+			   
+	           @Override
+	           public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+	                           long arg3)
+	           {
+	        	   if (lview.isItemChecked(arg2))
+	               {
+	                   String temp = lview.getItemAtPosition(arg2).toString();
+	                   selectBoxes.add(temp);
+	               } 
+	        	   else
+	        		   selectBoxes.remove(lview.getItemAtPosition(arg2).toString());
+	           }
+	       });
+	}//End of getChecked
+
+	private void reloadList() 
+	{
+	    getNameColumns();
+	    myAdapter = new ArrayAdapter<String>(this, R.layout.checkboxes_layout, scheduledNames);
+        setListAdapter(myAdapter);
+        	
+        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        getListView().setTextFilterEnabled(true);
+	
+	}
+
+	private void getNameColumns()
+	{
+		String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
+		String whereClause = getPatientDay();
+		
+		Cursor cursor = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
+				columns, whereClause, null, null);
+				
+		ArrayList<String> names = new ArrayList<String>();
+		if(cursor.moveToFirst())
+		{
+			do
+			{
+				int ct = 0;
+				names.add(cursor.getString(ct));
+				ct++;
+			}while (cursor.moveToNext());
+		}
+		
+		scheduledNames = (String[]) names.toArray(new String[names.size()]);
+	}//End of getNameColumns
+	
+	private String getPatientDay()
+	{
+		 String column;
+			
+		 if(day.equals("Monday"))
+			 column = Constants.COLUMN_MONDAY;
+		 else if(day.equals("Tuesday"))
+			 column = Constants.COLUMN_TUESDAY;
+		 else if(day.equals("Wednesday"))
+			 column = Constants.COLUMN_WEDNESDAY;
+		 else if(day.equals("Thursday"))
+			 column = Constants.COLUMN_THURSDAY;
+		 else
+			 column = Constants.COLUMN_FRIDAY;
+		 
+		 return column;
+	}
+}
+	

@@ -1,7 +1,5 @@
 package dbmanager;
 
-import java.io.IOException;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;

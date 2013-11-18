@@ -27,7 +27,7 @@ public class myWeekPage extends ListActivity
 	private Spinner spinnerSelection;
 	private String spinnerText;
 	private Cursor cursor;
-	ListView tuesdaylistview, wednesdaylistview, thursdaylistview, fridaylistview;
+	private ListView tuesdaylistview, wednesdaylistview, thursdaylistview, fridaylistview;
 	
 	private String[] monday, tuesday, wednesday, thursday, friday;
 	
@@ -72,7 +72,7 @@ public class myWeekPage extends ListActivity
 	    											break;
 				
 				case R.id.btnGoToDayMyWeekPage: 	spinnerText = spinnerSelection.getSelectedItem().toString();
-	    											if(spinnerText.equals("Select A Day"))
+	    											if(spinnerText.equals("Select A Day") || spinnerText.equals("Clear Schedule"))
 	    												Toast.makeText(myWeekPage.this, "You must select a day first.", Toast.LENGTH_LONG).show();
 	    											else
 	    											{
@@ -103,10 +103,13 @@ public class myWeekPage extends ListActivity
 					@Override
 					public void onClick(DialogInterface dialog, int which) 
 					{
-						
 						 ContentValues value = new ContentValues();
-						 value.put(Constants.COLUMN_DAY, "null");
-
+						 value.put(Constants.COLUMN_MONDAY, 0);
+					 	 value.put(Constants.COLUMN_TUESDAY, 0);
+					 	 value.put(Constants.COLUMN_WEDNESDAY, 0);
+					 	 value.put(Constants.COLUMN_THURSDAY, 0);
+					 	 value.put(Constants.COLUMN_FRIDAY, 0);
+					 	 
 						getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
 								value, null, null);
 						
@@ -145,10 +148,9 @@ public class myWeekPage extends ListActivity
 	
     private void getCursor()
     {
-    	String day = "Monday";
     	String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
     	
-    	String whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    	String whereClause = Constants.COLUMN_MONDAY + " = " + 1;
     	
     	for(int x = 0; x < 5; x++)
     	{
@@ -158,23 +160,18 @@ public class myWeekPage extends ListActivity
     		switch(x)
     		{
     			case 0:	loadArrays(x);
-    					day = "Tuesday";
-    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					whereClause = Constants.COLUMN_TUESDAY + " = " + 1;
     					break;
     			case 1: loadArrays(x);
-    					day = "Wednesday";
-    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					whereClause = Constants.COLUMN_WEDNESDAY + " = " + 1;
     					break;
     			case 2: loadArrays(x);
-    					day = "Thursday";
-    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					whereClause = Constants.COLUMN_THURSDAY + " = " + 1;
     					break;
     			case 3: loadArrays(x);
-    					day = "Friday";
-    					whereClause = Constants.COLUMN_DAY + " = " + "'" + day + "'";
+    					whereClause = Constants.COLUMN_FRIDAY + " = " + 1;
     					break;
     			case 4: loadArrays(x);
-    					Log.d("IN", "Last");
     					break;
     		}	
     	}

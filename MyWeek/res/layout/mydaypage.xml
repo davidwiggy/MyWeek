@@ -23,7 +23,7 @@
            android:layout_marginTop="16dp"
            android:text="@string/lblCurrentPatientsManageClients"
            android:textColor="@color/BabyBlue" />
-           "
+           
        <View
         	android:id="@+id/lineMyDay"
             android:layout_width="match_parent"
@@ -43,14 +43,23 @@
           </ListView>
           
        </LinearLayout>
-
+      
+       <TextView
+           android:id="@+id/txtlblSpinnerPatients"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/listViewHolderMyDay"
+           android:layout_marginTop="25dp"
+           android:text="@string/lblspinnerSelectPatientMyDay"
+           android:textColor="@color/BabyBlue" />
+    
   	    <Spinner
 	        android:id="@+id/spinnerPatientSelectionMyDay"
 	        android:layout_width="150dip"
 	        android:layout_height="40dip"
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/listViewHolderMyDay"
-	        android:layout_marginTop="20dip"/>
+	        android:layout_marginTop="35dip"/>
 
 	    <Spinner
 	        android:id="@+id/spinnerDaySelectionMyDay"
@@ -58,7 +67,7 @@
 	        android:layout_height="40dip"
 	        android:layout_alignParentRight="true"
 	        android:layout_below="@+id/listViewHolderMyDay"
-	        android:layout_marginTop="20dip"
+	        android:layout_marginTop="35dip"
 	        android:entries="@array/days_array" />
 	    
 	    <Button
@@ -80,19 +89,19 @@
 	        android:layout_marginTop="10dip"
 	        android:layout_width="150dip"
 	        android:layout_height="35dip"
-	        android:text="@string/btnlblMoveMyDayPage"
+	        android:text="@string/btnlblRescheduleMyDayPage"
 	        android:textSize="5pt"
 	        android:textStyle="bold" />
 	    
 	    <Button
-	        android:id="@+id/btnDeletePatientsMyDay"
+	        android:id="@+id/btnChangeDayPatientsMyDay"
 	        android:background="@layout/buttonlayout"
 	        android:layout_below="@id/btnAddMyDay"
 	        android:layout_alignParentRight="true"
 	        android:layout_marginTop="10dip"
 	        android:layout_width="150dip"
 	        android:layout_height="35dip"
-	        android:text="@string/btnlblDeleteMyDayPage"
+	        android:text="@string/btnlblChangeDay"
 	        android:textSize="5pt"
 	        android:textStyle="bold" />
 	    

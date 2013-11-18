@@ -1,3 +1,4 @@
 1384092958869	Rename field 'KEY_ID'
 1384555828856	Extracts string 'Clear Schedule' into R.string.btnClearScheduleMyWeekPage
 1384630867616	Delete element
+1384642529703	Extracts string '(Select a Patient to add to the day.)' into R.string.lblspinnerSelectPatientMyDay

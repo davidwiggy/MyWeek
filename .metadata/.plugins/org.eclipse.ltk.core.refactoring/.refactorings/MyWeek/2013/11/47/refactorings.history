@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Extracts string &apos;Change Day&apos; into R.string.btnlblChangeDay" description="Extracts string &apos;Change Day&apos; into R.string.btnlblChangeDay" file="/MyWeek/res/layout/mydaypage.xml" flags="6" id="com.android.ide.eclipse.adt.refactoring.extract.string" mode="EDIT_SOURCE" proj="/MyWeek" rplc-all-java="false" rplc-all-xml="false" sel-end="4193" sel-start="4184" stamp="1384742174063" tok-esc="Change Day" xml-attr-name="android:text"/>
+</session>
