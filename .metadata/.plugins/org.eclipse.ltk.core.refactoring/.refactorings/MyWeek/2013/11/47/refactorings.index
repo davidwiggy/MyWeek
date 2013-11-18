@@ -1,1 +1,6 @@
 1384742174063	Extracts string 'Change Day' into R.string.btnlblChangeDay
+1384743544338	Extracts string 'Notes' into R.string.lblNotesHeader
+1384747514560	Extracts string 'Add Note' into R.string.btnlblAddNoteNotesPage
+1384747542418	Extracts string 'Back' into R.string.btnlblBackNotesPage
+1384753247097	Delete element
+1384814195892	Extracts string 'Add Notes' into R.string.btnlblAddNotesMyDay

@@ -1,0 +1,74 @@
+package com.example.myweek;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class Notes extends Activity
+{
+
+	private String patientName, callingActivity;
+	private TextView title;
+	private Button btnBack;
+	
+	public void onCreate(Bundle savedInstanceState) 
+    {         
+
+       super.onCreate(savedInstanceState);    
+       setContentView(R.layout.notespage);
+       
+       //Getting passed in variables
+       Intent intent = getIntent();
+       patientName = intent.getStringExtra("name");
+       callingActivity = intent.getStringExtra("screen");
+       
+       //Set up title
+       title = (TextView)findViewById(R.id.txtlblCurrentPatientsNotes);
+       title.setText(patientName);
+       
+       //Set up the Buttons
+       btnBack = (Button)findViewById(R.id.btnBackNotesPage);
+       
+       btnBack.setOnClickListener(myButtonListener);
+       
+
+   }//End of On Create
+
+	//OnClickListener for buttons
+	private OnClickListener myButtonListener = new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			switch (v.getId())
+			{
+				case R.id.btnBackNotesPage:		startPreviousActivity();		
+												break;
+			}
+		}
+
+
+
+
+	}; 
+	
+	private void startPreviousActivity() 
+	{
+		if(callingActivity.equals("MyDay.class"))
+		{
+			Intent startPreviousPage = new Intent(Notes.this, MyDay.class);
+			startActivity(startPreviousPage);
+		}
+		else
+		{
+			Intent startPreviousPage = new Intent(Notes.this, ManageClients.class);
+			startActivity(startPreviousPage);
+		}
+									
+			
+	}
+}

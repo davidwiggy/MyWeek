@@ -68,5 +68,9 @@
         <string name="btnClearScheduleMyWeekPage">Clear Schedule</string>
         <string name="lblspinnerSelectPatientMyDay">(Select a Patient to add to the day.)</string>
         <string name="btnlblChangeDay">Change Day</string>
+        <string name="lblNotesHeader">Notes</string>
+        <string name="btnlblAddNoteNotesPage">Add Note</string>
+        <string name="btnlblBackNotesPage">Back</string>
+        <string name="btnlblAddNotesMyDay">Add Notes</string>
    
 </resources>

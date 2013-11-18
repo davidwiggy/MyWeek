@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import dbmanager.Constants;
 import dbmanager.PatientsDatabaseProvider;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -32,9 +34,9 @@ public class MyDay extends ListActivity
 	private SimpleCursorAdapter myAdapter, spinnerAdapter;
 	private Spinner spinnerDay, spinnerPatient;
 	private Button btnBack, btnAdd, btnMove, btnChangeDay;
-	private String day;
+	private String day, longClickPatientToDelete;
 	private ListView lview;
-	private TextView title, spinnerPatientSelection, spinnerDaySelection;
+	private TextView title, spinnerPatientSelection, spinnerDaySelection, btnNotes;
 	private Cursor spinCur;
 	
     @SuppressLint("NewApi")
@@ -59,7 +61,10 @@ public class MyDay extends ListActivity
        spinnerDay     = (Spinner)findViewById(R.id.spinnerDaySelectionMyDay);
        setUpDaySpinner();
        setSpinnerPatientSelection();
-       setSpinnerDaySelection();
+       getSpinnerDaySelection();
+       
+       //Set up the Long Click Handler
+       longClickHandler();
        
        //Set up checkBoxes
        lview = getListView();
@@ -82,14 +87,71 @@ public class MyDay extends ListActivity
        btnAdd       = (Button)findViewById(R.id.btnAddMyDay);
        btnMove      = (Button)findViewById(R.id.btnMovePatientsMyDay);
        btnChangeDay = (Button)findViewById(R.id.btnChangeDayPatientsMyDay);
+       btnNotes     = (Button)findViewById(R.id.btnAddNotesMyDayPage);
        
        btnBack     .setOnClickListener(myButtonListener);
        btnAdd      .setOnClickListener(myButtonListener);
        btnMove     .setOnClickListener(myButtonListener);
        btnChangeDay.setOnClickListener(myButtonListener);
+       btnNotes    .setOnClickListener(myButtonListener);
        
 
    }//End of On Create
+    
+	//Setting up the long click listener
+	private void longClickHandler()
+	{
+		ListView lv = getListView();
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){ 
+               @Override 
+               public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) 
+              { 
+            	   longClickPatientToDelete = ((TextView) view).getText().toString();
+            	   deleteRecordForLongClick();
+            	   return false;
+              } 
+         }); 
+	}//End of longClickHandler
+    
+	//For delete one record at a time with the Long Click
+		private void deleteRecordForLongClick ()
+		{
+			
+			//Show an alert dialog to confirm deletion
+			AlertDialog dialog = new AlertDialog.Builder(this).create();
+			dialog.setMessage("Are you sure you want to unschedule " + longClickPatientToDelete + "?");
+
+			//Set up two buttons. Right one is BUTTON_POSITIVE
+			dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Unschedule",
+				new DialogInterface.OnClickListener()
+				{	
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + longClickPatientToDelete + "'";
+						String column = getDayColumn();
+						ContentValues value = new ContentValues();
+						value.put(column, 0);
+						
+						//Delete one record..
+						Toast.makeText(getApplicationContext(), "Patient " + longClickPatientToDelete + " unScheduled", Toast.LENGTH_SHORT).show();
+						 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
+								 value, whereClause, null);
+					}
+				});
+
+			//This is the left button in the dialog box
+			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+				new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						//Do nothing. Dialog will simply disappear.
+					}
+				});
+			dialog.show();
+		}//END deleteRecord
     
 	private void setUpDaySpinner() 
 	{
@@ -126,11 +188,33 @@ public class MyDay extends ListActivity
 													 
 				case R.id.btnChangeDayPatientsMyDay: changeDay();
 													 break;
+													 
+				case R.id.btnAddNotesMyDayPage:      startNotesPage();
 			}
 		}
+
+
 	}; 
 
-	
+	//Method to start Notes page
+	private void startNotesPage() 
+	{
+		String[] selectedNames;
+		selectedNames = (String[]) selectedBoxes.toArray(new String[selectedBoxes.size()]); 
+		
+		if(selectedNames.length > 1 || selectedNames.length == 0)
+			Toast.makeText(this, "You must select ONE patient", Toast.LENGTH_SHORT).show();
+		else 
+		{
+			String activity = "MyDay.class";
+			Intent startNotesPage = new Intent(MyDay.this, Notes.class);
+			startNotesPage.putExtra("name", selectedNames[0]);
+			startNotesPage.putExtra("screen", activity);
+			startNotesPage.putExtra("day", day);
+			startActivity(startNotesPage);
+		}
+	}//End of startNotesPage
+
 	//Method to change the day 
 	private void changeDay() 
 	{
@@ -142,8 +226,7 @@ public class MyDay extends ListActivity
 			startMyDayActivity.putExtra("day_name", spinnerDaySelection.getText().toString());
 			startActivity(startMyDayActivity);
 		}
-			
-	}
+	}//End of Change day
 	
 	
 	//To add Patients to the day.
@@ -156,25 +239,17 @@ public class MyDay extends ListActivity
 			Toast.makeText(this, "You must select a Patient", Toast.LENGTH_SHORT).show();
 		
 		 ContentValues value = new ContentValues();
-		 if(day.equals("Monday"))
-			 value.put(Constants.COLUMN_MONDAY, 1);
-		 else if(day.equals("Tuesday"))
-			 value.put(Constants.COLUMN_TUESDAY, 1);
-		 else if(day.equals("Wednesday"))
-			 value.put(Constants.COLUMN_WEDNESDAY, 1);
-		 else if(day.equals("Thursday"))
-			 value.put(Constants.COLUMN_THURSDAY, 1);
-		 else if(day.equals("Friday"))
-			 value.put(Constants.COLUMN_FRIDAY, 1);
+		 String column = getDayColumn();
+		 value.put(column, 1);
 		 
 		 String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + patientSelection + "'";
 		 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
 				 value, whereClause, null);
 	
 		 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
-		 
-	}
+	}//End of addPatient
 	
+	//Move Patients to different days
 	private void movePatients() 
 	{
 		 String selectionDay = (String) spinnerDaySelection.getText();
@@ -193,43 +268,47 @@ public class MyDay extends ListActivity
 		 else
 		 {
 			 String column = getDayColumn();
-		
-			 ContentValues value = new ContentValues();
-			 if(selectionDay.equals("Monday"))
+
+			 if(day.equals(selectionDay))
+				 Toast.makeText(this, "Patients already scheduled for this day.", Toast.LENGTH_SHORT).show();
+			 else
 			 {
-				 value.put(Constants.COLUMN_MONDAY, 1);
-				 value.put(column, 0);
-			 }	 
-			 else if(selectionDay.equals("Tuesday"))
-			 {
-				 Toast.makeText(this, "IN CAON", Toast.LENGTH_SHORT).show();
-				 value.put(Constants.COLUMN_TUESDAY, 1);
-				 value.put(column, 0);
+				 ContentValues value = new ContentValues();
+				 if(selectionDay.equals("Monday"))
+				 {
+					 value.put(Constants.COLUMN_MONDAY, 1);
+					 value.put(column, 0);
+				 }	 
+				 else if(selectionDay.equals("Tuesday"))
+				 {
+					 value.put(Constants.COLUMN_TUESDAY, 1);
+					 value.put(column, 0);
+				 }
+				 else if(selectionDay.equals("Wednesday"))
+				 {
+					 value.put(Constants.COLUMN_WEDNESDAY, 1);
+					 value.put(column, 0);
+				 }
+				 else if(selectionDay.equals("Thursday"))
+				 {
+					 value.put(Constants.COLUMN_THURSDAY, 1);
+					 value.put(column, 0);
+				 }
+				 else if(selectionDay.equals("Friday"))
+				 {
+					 value.put(Constants.COLUMN_FRIDAY, 1);
+					 value.put(column, 0);
+				 }
+				 
+				 //For loop to update all selected names.
+				 for(int x = 0; x < selectedNames.length; x++)
+				 {
+					 String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + selectedNames[x] + "'";
+					 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
+							 value, whereClause, null);
+				 }
+				 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
 			 }
-			 else if(selectionDay.equals("Wednesday"))
-			 {
-				 value.put(Constants.COLUMN_WEDNESDAY, 1);
-				 value.put(column, 0);
-			 }
-			 else if(selectionDay.equals("Thursday"))
-			 {
-				 value.put(Constants.COLUMN_THURSDAY, 1);
-				 value.put(column, 0);
-			 }
-			 else if(selectionDay.equals("Friday"))
-			 {
-				 value.put(Constants.COLUMN_FRIDAY, 1);
-				 value.put(column, 0);
-			 }
-			 
-			 //For loop to update all selected names.
-			 for(int x = 0; x < selectedNames.length; x++)
-			 {
-				 String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + selectedNames[x] + "'";
-				 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
-						 value, whereClause, null);
-			 }
-			 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
 
 		 }//End of Condition
 
@@ -256,11 +335,12 @@ public class MyDay extends ListActivity
 				}
 		    }
 		);
-	}
+	}//End of setSpinnerPatientSelection
 	
 	//To get the selection from the spinner for Day.
 	
-	private void setSpinnerDaySelection()
+	//Method to get the spinner day selection
+	private void getSpinnerDaySelection()
 	{
 		spinnerDay.setOnItemSelectedListener(
 		    new AdapterView.OnItemSelectedListener() {
@@ -279,7 +359,7 @@ public class MyDay extends ListActivity
 				}
 		    }
 		);
-	}
+	}//End of getSpinnerDaySelection
 	
 	//Get all checked items
 	private void getChecked()
@@ -305,6 +385,7 @@ public class MyDay extends ListActivity
 	       });
 	}//End of getChecked
 
+	//Method to get the day
 	private String getDayColumn()
 	{
 		String column; 
@@ -322,6 +403,7 @@ public class MyDay extends ListActivity
 		 return column;
 	}
 	
+	//Cursor loader for the listview
     @SuppressLint("NewApi")
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args)

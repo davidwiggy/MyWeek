@@ -29,7 +29,7 @@ public class ManageClients extends ListActivity
 	private String[] namesArr;
 	private ArrayList<String> selectedBoxes;
 	private ArrayAdapter<String> myAdapter;
-	private Button btnBack, btnAdd, btnDeleteAll, btnSchedule;
+	private Button btnBack, btnAdd, btnDeleteAll, btnSchedule, btnAddNotes;
 	private EditText patientName;
 	private ListView lv;
 	private Spinner spinner;
@@ -54,11 +54,13 @@ public class ManageClients extends ListActivity
        btnAdd       = (Button)findViewById(R.id.btnAddManageClients);
        btnDeleteAll = (Button)findViewById(R.id.btnDeleteManageClients);
        btnSchedule  = (Button)findViewById(R.id.btnScheduleManageClients);
+       btnAddNotes  = (Button)findViewById(R.id.btnAddNotesManageClientsPage);
        
-       btnBack.setOnClickListener(myButtonListener);
-       btnAdd.setOnClickListener(myButtonListener);
+       btnBack     .setOnClickListener(myButtonListener);
+       btnAdd      .setOnClickListener(myButtonListener);
        btnDeleteAll.setOnClickListener(myButtonListener);
-       btnSchedule.setOnClickListener(myButtonListener);
+       btnSchedule .setOnClickListener(myButtonListener);
+       btnAddNotes .setOnClickListener(myButtonListener);
     
        longClickHandler();
        setSpinnerSelection();
@@ -74,27 +76,54 @@ public class ManageClients extends ListActivity
 		{
 			switch (v.getId())
 			{
-			case R.id.btnAddManageClients:		if(patientName.getText().length() == 0)
-												{
-													Toast.makeText(ManageClients.this, "Sorry you must enter name", Toast.LENGTH_SHORT).show();
-												}									
-												else
-												{												
-													saveRecordToDB();
-												}
-												break;
-			case R.id.btnBackManageClients: 	Intent startMainActivity = new Intent(ManageClients.this, MyWeekMainActivity.class);
-												startActivity(startMainActivity);
-												break;
-			case R.id.btnDeleteManageClients:	deleteAll();
-												break;
-			case R.id.btnScheduleManageClients: schedulePatients();
-												break;
+				case R.id.btnAddManageClients:			if(patientName.getText().length() == 0)
+														{
+														Toast.makeText(ManageClients.this, "Sorry you must enter name", Toast.LENGTH_SHORT).show();
+														}									
+														else
+														{												
+														saveRecordToDB();
+														}
+														break;
+												
+				case R.id.btnBackManageClients: 		Intent startMainActivity = new Intent(ManageClients.this, MyWeekMainActivity.class);
+														startActivity(startMainActivity);
+														break;
+												
+				case R.id.btnDeleteManageClients:		deleteAll();
+														break;
+												
+				case R.id.btnScheduleManageClients: 	schedulePatients();
+														break;
+												
+				case R.id.btnAddNotesManageClientsPage:	addNotes();
+														break;
 			}
 		}
+
+
 	};
 	
+	//Add notes to individual patients
+	private void addNotes()
+	{
+		String[] selectedNames;
+		selectedNames = (String[]) selectedBoxes.toArray(new String[selectedBoxes.size()]); 
+		
+		if(selectedNames.length > 1 || selectedNames.length == 0)
+			Toast.makeText(this, "You must select ONE patient", Toast.LENGTH_SHORT).show();
+		else 
+		{
+			String activity = "ManageClients.class";
+			Intent startNotesPage = new Intent(ManageClients.this, Notes.class);
+			startNotesPage.putExtra("name", selectedNames[0]);
+			startNotesPage.putExtra("screen", activity);
+			startNotesPage.putExtra("day", "RUBISH");
+			startActivity(startNotesPage);
+		}		
+	}
 	
+	//Schedule Patients
 	private void schedulePatients() 
 	{
 		 String sel = (String) spinnerSelection.getText();

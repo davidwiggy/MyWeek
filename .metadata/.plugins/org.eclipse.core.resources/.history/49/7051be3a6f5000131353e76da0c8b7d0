@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@color/Gunmetal">
+    
+        <TextView
+            android:id="@+id/titleNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/BabyBlue"
+            android:text="@string/lblNotesHeader"
+            android:textSize="24sp" />
+    
+        <TextView
+           android:id="@+id/txtlblCurrentPatientsNotes"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/titleNotes"
+           android:layout_marginTop="16dp"
+           android:textColor="@color/BabyBlue" />
+
+        <EditText
+            android:id="@+id/etPatientNotes"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="60dp"
+            android:layout_marginBottom="100dp"
+            android:textColor="@color/Gunmetal"
+            android:gravity="top|left"
+            android:layout_below="@+id/txtlblCurrentPatientsNotes"
+            android:layout_centerHorizontal="true"
+            android:background="@color/BabyBlue"
+            android:ems="10"
+            android:inputType="textMultiLine" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/btnBackNotesPage"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/etPatientNotes"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
+            android:background="@layout/buttonlayout"
+        	android:textSize="5pt"
+        	android:textStyle="bold" 
+            android:text="@string/btnlblBackNotesPage" />
+
+        <Button
+            android:id="@+id/btnAddNotesPage"
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/btnBackNotesPage"
+            android:layout_alignBottom="@+id/btnBackNotesPage"
+            android:layout_alignRight="@+id/etPatientNotes"
+            android:background="@layout/buttonlayout"
+        	android:textSize="5pt"
+        	android:textStyle="bold" 
+            android:text="@string/btnlblAddNoteNotesPage" />
+
+</RelativeLayout>
