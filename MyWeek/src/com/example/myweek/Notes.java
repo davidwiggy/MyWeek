@@ -1,7 +1,6 @@
 package com.example.myweek;
 
 import java.util.ArrayList;
-
 import dbmanager.Constants;
 import dbmanager.PatientsDatabaseProvider;
 import android.app.Activity;
@@ -15,9 +14,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+//*********************************************************************************************
+//** Class:      Notes                                                                       **
+//** Programmer: Timothy David Wiggins                                                       **
+//** PURPOSE:    This activity displays the notes of the selected patient. It allows the     **
+//** PURPOSE:    user to see and update the notes on the patient. It loads a edit text with  ** 
+//** PURPOSE:    the patients notes. It uses a Content Resolver to get the information from  **
+//** PURPOSE:    a database.                                                                 **
+//*********************************************************************************************
 public class Notes extends Activity
 {
-
 	private String patientName, callingActivity, day;
 	private TextView title;
 	private Button btnBack, btnAddNote;
@@ -25,7 +31,6 @@ public class Notes extends Activity
 	
 	public void onCreate(Bundle savedInstanceState) 
     {         
-
        super.onCreate(savedInstanceState);    
        setContentView(R.layout.notespage);
        
@@ -51,8 +56,11 @@ public class Notes extends Activity
 
    }//End of On Create
 
-	
-	//OnClickListener for buttons
+	//*******************************************************
+	//** The method is an onClick Listener for the buttons **
+	//** It contains a switch statement to perform an      **
+	//** action when one of the buttons is clicked.        **
+	//*******************************************************
 	private OnClickListener myButtonListener = new OnClickListener()
 	{
 		@Override
@@ -69,8 +77,11 @@ public class Notes extends Activity
 		}
 	}; 
 	
-	
-	//Update notes in database
+	//*******************************************************
+	//** The method is an onClick Listener for the buttons **
+	//** It contains a switch statement to perform an      **
+	//** action when one of the buttons is clicked.        **
+	//*******************************************************
 	private void addNote() 
 	{
 		ContentValues value = new ContentValues(); 
@@ -82,7 +93,11 @@ public class Notes extends Activity
 		loadEditText();
 	}//End of add note
 	
-	//Load the EditText
+	//*******************************************************
+	//** The method uses a Content Resolver to get info    **
+	//** from the database. It then loads the info into a  **
+	//** edit text.                                        **
+	//*******************************************************
 	private void loadEditText() 
 	{
 		String[] columns = new String[] { Constants.COLUMN_NOTES };
@@ -105,10 +120,11 @@ public class Notes extends Activity
 		String[] temp;
 		temp = (String[]) note.toArray(new String[note.size()]);
 		notes.setText(temp[0]);
-		
 	}//End of loadEditText
 
-	//Go back to Previous Screen
+	//*******************************************************
+	//** This method starts the previous screen.           **
+	//*******************************************************
 	private void startPreviousActivity() 
 	{
 		if(callingActivity.equals("MyDay.class"))

@@ -11,7 +11,6 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -20,9 +19,17 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+//*********************************************************************************************
+//** Class:      myWeekPage                                                                       **
+//** Programmer: Timothy David Wiggins                                                       **
+//** PURPOSE:    This activity displays the weeks schedule. It has five list views side by   **
+//** PURPOSE:    side. From this activity the user can clear the whole weeks schedule. Or go ** 
+//** PURPOSE:    to any day of the week, by selecting a day then press the go to day button. **
+//** PURPOSE:    This class load the patient names that are scheduled into arrays and uses   **
+//** PURPOSE:    those arrays to load the list views.                                        **
+//*********************************************************************************************
 public class myWeekPage extends ListActivity 
 {
-	
 	private Button btnBack, btnMyDay, btnClear;
 	private Spinner spinnerSelection;
 	private String spinnerText;
@@ -45,21 +52,23 @@ public class myWeekPage extends ListActivity
         //Set up ArrayAdaptor to display the current patients
 	    setListViews();
        
+	   //Setting up the buttons
        btnBack = (Button)findViewById(R.id.btnBackMyWeekPage);
        btnMyDay = (Button)findViewById(R.id.btnGoToDayMyWeekPage);
        btnClear = (Button)findViewById(R.id.btnClearScheduleMyWeek);
-
        btnBack.setOnClickListener(myButtonListener);
        btnMyDay.setOnClickListener(myButtonListener);
        btnClear.setOnClickListener(myButtonListener);
        
        //Setting up the spinner
        spinnerSelection = (Spinner)findViewById(R.id.spinnerDaySelectionMyWeekPage);
-      
-      
     }//End of On Create
 
-    
+	//*******************************************************
+	//** The method is an onClick Listener for the buttons **
+	//** It contains a switch statement to perform an      **
+	//** action when one of the buttons is clicked.        **
+	//*******************************************************
 	private OnClickListener myButtonListener = new OnClickListener()
 	{
 		@Override
@@ -85,11 +94,13 @@ public class myWeekPage extends ListActivity
 				case R.id.btnClearScheduleMyWeek:	clearSchedule();
 			}
 		}
-
-
 	};
     
-	
+	//*******************************************************
+	//** The method updates the values in the database. To **
+	//** clear the schedule. Once the schedule is cleared. **
+	//** It reloads the listViews.                         **
+	//*******************************************************
 	private void clearSchedule() 
 	{
 		//Show an alert dialog to confirm deletion
@@ -130,7 +141,10 @@ public class myWeekPage extends ListActivity
 		dialog.show();
 	}
 	
-	
+	//*******************************************************
+	//** The method loads the list views from the arrays.  **
+	//** It uses five list views that are filled.          **
+	//*******************************************************
 	private void setListViews()
 	{
 		getCursor();
@@ -146,6 +160,12 @@ public class myWeekPage extends ListActivity
    		   R.layout.listviewsize, friday));
 	}
 	
+	//*******************************************************
+	//** This method uses a ContentResolver to load the    **
+	//** cursor with the schedule for each day. It calls   **
+	//** another method to load the arrays once the cursor **
+	//** is set.                                           **
+	//*******************************************************
     private void getCursor()
     {
     	String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
@@ -177,10 +197,14 @@ public class myWeekPage extends ListActivity
     	}
     }//End of getCursor
 
-
+	//*******************************************************
+	//** This method loads the arrays from the cursor. It  **
+	//** is called each time the cursor is set. First it   **
+	//** loads the names into a ArrayList and then into the**
+    //** String arrays.                                    **
+	//*******************************************************
 	private void loadArrays(int x)
-	{		
-		
+	{			
 		ArrayList<String> names = new ArrayList<String>();
 		if(cursor.moveToFirst())
 		{
@@ -194,7 +218,6 @@ public class myWeekPage extends ListActivity
 
 		switch(x)
 		{
-
 			case 0:	monday = (String[]) names.toArray(new String[names.size()]);
 					names.clear();
 					break;
@@ -212,6 +235,4 @@ public class myWeekPage extends ListActivity
 					break;
 		}
 	}//End of loadArrays
-	
-	
 }//End of Class

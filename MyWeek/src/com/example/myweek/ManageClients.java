@@ -3,32 +3,51 @@ package com.example.myweek;
 import java.util.ArrayList;
 import dbmanager.Constants;
 import dbmanager.PatientsDatabaseProvider;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+//*********************************************************************************************
+//** Class:      ManageClients                                                        **
+//** Programmer: Timothy David Wiggins                                                       **
+//** PURPOSE:    This activity allows the user to add new patients to the database. The user **
+//** PURPOSE:    will type the patient name in a edit text and then click the add button.    ** 
+//** PURPOSE:    The activity also allows the user to add notes to individual patients, by   **
+//** PURPOSE:    selecting ONE and ONLY ONE patient by clicking on their name and then       **
+//** PURPOSE:    pressing the notes button. The user can also remove one patient at a time by**
+//** PURPOSE:    long pressing the patient name and then verifying by click yes in a pop-up  **
+//** PURPOSE:    box. Or the user can remove all patients by click the delete all button and **
+//** PURPOSE:    verifying a pop-up box. The user can also schedule patients, by checking    **
+//** PURPOSE:    their name, then selecting a day in the spinner, and finally pressing the   **
+//** PURPOSE:    schedule button.                                                            **
+//*********************************************************************************************
+@SuppressLint("NewApi")
 public class ManageClients extends ListActivity
+						implements LoaderCallbacks<Cursor>
 {
-	private String[] namesArr;
 	private ArrayList<String> selectedBoxes;
-	private ArrayAdapter<String> myAdapter;
+	private SimpleCursorAdapter myAdapter;
 	private Button btnBack, btnAdd, btnDeleteAll, btnSchedule, btnAddNotes;
 	private EditText patientName;
 	private ListView lv;
@@ -41,9 +60,19 @@ public class ManageClients extends ListActivity
        super.onCreate(savedInstanceState);    
        setContentView(R.layout.manage_clients);
        
-       //Load the List View
-       reloadList();
+       //Set up the listView
+       String[] from = new String[] { Constants.COLUMN_PATIENT_NAME };
+       int[] to = new int[] { R.id.checkbox1 };
+       
+       myAdapter = new SimpleCursorAdapter(this, R.layout.checkboxes_layout, null, from, to, 0);
+       setListAdapter(myAdapter);
+       
+       getLoaderManager().initLoader(1, null, this);
+       registerForContextMenu(getListView());
+       getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+       getListView().setTextFilterEnabled(true);
 
+       //Set up Misc stuff
        selectedBoxes = new ArrayList<String>();
        patientName = (EditText)findViewById(R.id.enter_patient_name);
        lv = getListView();
@@ -54,21 +83,25 @@ public class ManageClients extends ListActivity
        btnAdd       = (Button)findViewById(R.id.btnAddManageClients);
        btnDeleteAll = (Button)findViewById(R.id.btnDeleteManageClients);
        btnSchedule  = (Button)findViewById(R.id.btnScheduleManageClients);
-       btnAddNotes  = (Button)findViewById(R.id.btnAddNotesManageClientsPage);
-       
+       btnAddNotes  = (Button)findViewById(R.id.btnAddNotesManageClientsPage);   
        btnBack     .setOnClickListener(myButtonListener);
        btnAdd      .setOnClickListener(myButtonListener);
        btnDeleteAll.setOnClickListener(myButtonListener);
        btnSchedule .setOnClickListener(myButtonListener);
        btnAddNotes .setOnClickListener(myButtonListener);
-    
+       
+       //More misc stuff
        longClickHandler();
        setSpinnerSelection();
        getChecked();
        
     }//End of onCreate
     
-	
+	//*******************************************************
+	//** The method is an onClick Listener for the buttons **
+	//** It contains a switch statement to perform an      **
+	//** action when one of the buttons is clicked.        **
+	//*******************************************************
 	private OnClickListener myButtonListener = new OnClickListener()
 	{
 		@Override
@@ -104,7 +137,11 @@ public class ManageClients extends ListActivity
 
 	};
 	
-	//Add notes to individual patients
+	//*******************************************************
+	//** The method is to add notes to individual patients **
+	//** The user selects one name, and then clicks the add**
+	//** notes button.                                     **
+	//*******************************************************
 	private void addNotes()
 	{
 		String[] selectedNames;
@@ -123,14 +160,18 @@ public class ManageClients extends ListActivity
 		}		
 	}
 	
-	//Schedule Patients
+	//*******************************************************
+	//** The method schedules patients for days of the week**
+	//** The user can select one or as many patients as    **
+	//** needed and then click schedule button. The method **
+	//** changes the database to reflect the users choices **
+	//*******************************************************
 	private void schedulePatients() 
 	{
 		 String sel = (String) spinnerSelection.getText();
 		 
 		 String[] selectedNames;
 		 selectedNames = (String[]) selectedBoxes.toArray(new String[selectedBoxes.size()]);
-		 
 		 
 		 if(sel.equals("Select A Day"))
 		 {
@@ -171,10 +212,49 @@ public class ManageClients extends ListActivity
 			 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
 
 		 }//End of Condition
-
 	}//End of  Schedule Patients
 	
-	//To get the selection from the spinner.
+	//*******************************************************
+	//** The method allows the user to clear out the data- **
+	//** base. It contains a AlertDialog box to verify the **
+	//** users intention.                                  **
+	//*******************************************************
+	private void deleteAll() 
+	{
+		//Show an alert dialog to confirm deletion
+		AlertDialog dialog = new AlertDialog.Builder(this).create();
+		dialog.setMessage("Are you sure you would like to delete ALL patients?");
+		
+		//Set up the buttons. Right is Button_Postive
+		dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Delete All",
+				new DialogInterface.OnClickListener() 
+				{	
+					@Override
+					public void onClick(DialogInterface dialog, int which) 
+					{
+						Toast.makeText(ManageClients.this, "All patients deleted", Toast.LENGTH_LONG).show();
+						getContentResolver().delete(PatientsDatabaseProvider.TABLE_URI, null, null);
+					}
+				});
+		
+		//This is the left button in the dialog box
+		dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+			new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					//Do nothing. Dialog will simply disappear.
+				}
+			});
+		dialog.show();
+	}//End of delete All
+	
+	//*******************************************************
+	//** The method is to get the selection from the       **
+	//** spinner. The user selects a day in the spinner    **
+	//** and it is placed in a text view for later use.    **
+	//*******************************************************
 	private void setSpinnerSelection()
 	{
 		spinner.setOnItemSelectedListener(
@@ -196,82 +276,68 @@ public class ManageClients extends ListActivity
 		);
 	}
 
-	//Delete all patients in database
-	private void deleteAll() 
-	{
-		//Show an alert dialog to confirm deletion
-		AlertDialog dialog = new AlertDialog.Builder(this).create();
-		dialog.setMessage("Are you sure you would like to delete ALL patients?");
-		
-		//Set up the buttons. Right is Button_Postive
-		dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Delete All",
-				new DialogInterface.OnClickListener() 
-				{	
-					@Override
-					public void onClick(DialogInterface dialog, int which) 
-					{
-						Toast.makeText(ManageClients.this, "All patients deleted", Toast.LENGTH_LONG).show();
-						getContentResolver().delete(PatientsDatabaseProvider.TABLE_URI, null, null);
-						reloadList();
-					}
-				});
-		
-		//This is the left button in the dialog box
-		dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-			new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int which)
-				{
-					//Do nothing. Dialog will simply disappear.
-				}
-			});
-		dialog.show();
-	}
-	
-	//Get all checked items
+	//*******************************************************
+	//** The method adds and removes the users choices, in **
+	//** the check boxes, dynamically. When the user clicks**
+	//** on a check box it is add to a list array. When the**
+	//** user unchecks the box it is removed.              **
+	//*******************************************************
 	private void getChecked()
 	{
 		   lv.setOnItemClickListener(new ListView.OnItemClickListener() 
 	       {
 	           @Override
-	           public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-	                           long arg3)
+	           public void onItemClick(AdapterView<?> parent, View view, int position,
+	                           long id)
 	           {
-	        	   if (lv.isItemChecked(arg2))
+	        	   if (lv.isItemChecked(position))
 	               {
-	                   String temp = lv.getItemAtPosition(arg2).toString();
-	                   selectedBoxes.add(temp);
+	        		   String item = ((TextView) view).getText().toString();
+	                   selectedBoxes.add(item);
 	               } 
 	        	   else
-	        		   selectedBoxes.remove(lv.getItemAtPosition(arg2).toString());
+	        	   {
+	        		   String item = ((TextView) view).getText().toString();
+	        		   selectedBoxes.remove(item);
+	        	   }
 	           }
 	       });
 	}//End of getChecked
 	
-	//Setting up the long click listener
+	//**********************************************************
+	//** The method is a long click user for the patient      **
+	//** names. When a user long clicks a name another        **
+	//** method is called to remove the patient from the list **
+	//**********************************************************
 	private void longClickHandler()
 	{
-		       lv.setOnItemLongClickListener(new ListView.OnItemLongClickListener() 
-		       {
+		ListView lview = getListView();
+		lview.setOnItemLongClickListener(new ListView.OnItemLongClickListener() 
+	    {
 
-		    	   public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                   int pos, long id) 
-		    	   {
-		    		   deleteRecordForLongClick(pos);
-		    		   return true;
-		    	   }
-		       }); 
+    	   public boolean onItemLongClick(AdapterView<?> parent, View view,
+           int pos, long id) 
+    	   {
+    		   String longClickPatientToDelete = ((TextView) view).getText().toString();
+    		   deleteRecordForLongClick(longClickPatientToDelete);
+    		   return true;
+    	   }
+	    }); 
 	}
 	
-	//For delete one record at a time with the Long Click
-	private void deleteRecordForLongClick (int pos)
+	//**********************************************************
+	//** The method is to delete a patient on a long click.   **
+	//** It builds a dialog box to verify that the user wants **
+	//** to remove the patient from the database.             **
+	//**********************************************************
+	private void deleteRecordForLongClick (String patient)
 	{
+
+		final String patientToDelete = patient;
 		
-		final int num = pos;
 		//Show an alert dialog to confirm deletion
 		AlertDialog dialog = new AlertDialog.Builder(this).create();
-		dialog.setMessage("Are you sure you want to delete " + namesArr[num] + "?");
+		dialog.setMessage("Are you sure you want to delete " + patientToDelete + "?");
 
 		//Set up two buttons. Right one is BUTTON_POSITIVE
 		dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Delete patient",
@@ -280,13 +346,14 @@ public class ManageClients extends ListActivity
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					String column = Constants.COLUMN_PATIENT_NAME + " = " + "'" + namesArr[num] + "'";
+					//Remove patient from array
+					selectedBoxes.remove(patientToDelete);
+					String column = Constants.COLUMN_PATIENT_NAME + " = " + "'" + patientToDelete + "'";
 					
 					//Delete one record..
-					Toast.makeText(getApplicationContext(), "Patient " + namesArr[num] + " deleted!", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "Patient " + patientToDelete + " deleted!", Toast.LENGTH_SHORT).show();
 					getContentResolver().delete(
 							PatientsDatabaseProvider.TABLE_URI, column, null);
-					reloadList();
 				}
 			});
 
@@ -303,6 +370,11 @@ public class ManageClients extends ListActivity
 		dialog.show();
 	}//END deleteRecord
 
+	//**********************************************************
+	//** The method saves a patient in the database. It gets  **
+	//** the patient name from the edit text and then writes  **
+	//** the information to the database.                     **
+	//**********************************************************
 	private void saveRecordToDB() 
 	{
 		//Set up a ContentValues object, simply a set of key/value pairs.
@@ -320,8 +392,6 @@ public class ManageClients extends ListActivity
 			//Tell the user
 		    Toast.makeText(this, "New patient " + patientName.getText().toString() + " saved!", Toast.LENGTH_SHORT).show();
 			patientName.setText("");
-		
-			reloadList();
 		}
 		else
 		{
@@ -329,35 +399,29 @@ public class ManageClients extends ListActivity
 		}
 	}//End of Save Records
 	
-	private void reloadList() 
-	{
-	    getNameColumns();
-	    myAdapter = new ArrayAdapter<String>(this, R.layout.checkboxes_layout, namesArr);
-        setListAdapter(myAdapter);
-        	
-        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        getListView().setTextFilterEnabled(true);
-	
-	}
+	//Cursor loader for the listview
+    @SuppressLint("NewApi")
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args)
+    {
+            CursorLoader cursorLoader = new CursorLoader(this,
+                            PatientsDatabaseProvider.TABLE_URI, null, null, null, null);
+            return cursorLoader;
+    }
 
-	private void getNameColumns()
-	{
-		String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
+    @SuppressLint("NewApi")
+    @Override
+    public void onLoadFinished(Loader<Cursor> arg0, Cursor myCursor) 
+    {
+            myAdapter.swapCursor(myCursor);
+            
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> arg0) 
+    {
+            myAdapter.swapCursor(null);
+            
+    }
 		
-		Cursor cursor = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
-				columns, null, null, null);
-				
-		ArrayList<String> names = new ArrayList<String>();
-		if(cursor.moveToFirst())
-		{
-			do
-			{
-				int ct = 0;
-				names.add(cursor.getString(ct));
-				ct++;
-			}while (cursor.moveToNext());
-		}
-		
-		namesArr = (String[]) names.toArray(new String[names.size()]);
-	}//End of getNameColumns
 }

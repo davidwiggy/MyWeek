@@ -4,3 +4,8 @@
 1384747542418	Extracts string 'Back' into R.string.btnlblBackNotesPage
 1384753247097	Delete element
 1384814195892	Extracts string 'Add Notes' into R.string.btnlblAddNotesMyDay
+1384836233781	Extracts string '(Hold Patient name to Delete)' into R.string.txtlblhintHoldPatientNameToDeleteMyDay
+1384836358631	Extracts string '(Hold patient name to remove)' into R.string.txtlblHintRemovePatientMyDay
+1384836786319	Change Layout
+1384836870813	Extracts string 'Totals' into R.string.lblTotalsHeader
+1384837203546	Extracts string 'Back' into R.string.btnlblBackTotalPage

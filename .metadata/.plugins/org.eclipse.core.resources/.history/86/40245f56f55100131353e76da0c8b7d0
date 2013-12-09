@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is the layout for the Manage Clients Page. This page lets the user add, delete or schedule patients. -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Gunmetal" >
+
+
+<CheckedTextView 
+    android:id="@+id/checkbox1"
+    android:layout_width="fill_parent"
+    android:layout_height="40sp"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:gravity="center_vertical"
+    android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+    android:textSize="12sp"
+    android:textColor="@color/black"
+    android:paddingLeft="6dip"
+    android:paddingRight="6dip"
+    android:background="@layout/custom_checkbox">
+    
+    
+</CheckedTextView>
+</RelativeLayout>

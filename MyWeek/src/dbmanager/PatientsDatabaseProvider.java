@@ -10,9 +10,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+//*********************************************************************************************
+//** Class:      PatientDatabaseProvider                                                     **
+//** Programmer: Timothy David Wiggins                                                       **
+//** PURPOSE:    This class is the PatientsDatabaseProvider, it extends ContentProvider.     **
+//** PURPOSE:    This class contians the CRUD methods for access to the database information.**                                           
+//*********************************************************************************************
 public class PatientsDatabaseProvider extends ContentProvider 
 {
-	
 	private static String AUTHORITY = "com.example.myweek.PatientsDatabaseProvider";
 	public static final Uri TABLE_URI = Uri.parse("content://" + AUTHORITY +
 													"/" + Constants.TABLE_NAME);
@@ -47,6 +52,10 @@ public class PatientsDatabaseProvider extends ContentProvider
 		return null;
 	}//End of getType
 	
+	//*******************************************************
+	//** This method is the query method for access to the **
+	//** information in the database.                      **
+	//*******************************************************
 	@Override
 	public Cursor query(Uri uri, String[] projectionIn, String Selection,
 						String[] selectionArgs, String sortOrder)
@@ -80,6 +89,10 @@ public class PatientsDatabaseProvider extends ContentProvider
 		return myCursor;
 	}//End of query
 	
+	//*******************************************************
+	//** This method is the delete method to delete any    **
+	//** information in the database.                      **
+	//*******************************************************
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs)
 	{
@@ -93,13 +106,15 @@ public class PatientsDatabaseProvider extends ContentProvider
 		return count;
 	}//End of Delete 
 	
+	//*******************************************************
+	//** This method is the insert method to insert        **
+	//** information into the database.                    **
+	//*******************************************************
 	@Override
 	public Uri insert(Uri uri, ContentValues values)
 	{
-
 		if (myHelper == null)
 			initializeDB();
-
 		
 		long id = 0;
 		values.remove(Constants._id);
@@ -117,11 +132,13 @@ public class PatientsDatabaseProvider extends ContentProvider
 		{
 			getContext().getContentResolver().notifyChange(uri, null);
 		}
-
 		return ContentUris.withAppendedId(uri, id);
 	}//END insert
 	
-	
+	//*******************************************************
+	//** This method is the update method to update the    **
+	//** information in the database.                      **
+	//*******************************************************
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
 	{
@@ -136,7 +153,9 @@ public class PatientsDatabaseProvider extends ContentProvider
 		return count;
 	}//END update
 	
-	
+	//*******************************************************
+	//** This method is to initialize the database.        **
+	//*******************************************************
 	public void initializeDB()
 	{
 		//First, instantiate the DB helper, then create the DB.

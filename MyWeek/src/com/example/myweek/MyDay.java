@@ -25,7 +25,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+//*********************************************************************************************
+//** Class:      MyDay                                                                       **
+//** Programmer: Timothy David Wiggins                                                       **
+//** PURPOSE:    This activity allows the user to add new patients to the day. By selecting  **
+//** PURPOSE:    a patient name from a spinner that is populated with a simple cursor adapter** 
+//** PURPOSE:    and then click the add button. The user can also move the patient to a diff-**
+//** PURPOSE:    erent day by checking patient names and clicking reschedule. The user can   **
+//** PURPOSE:    also add notes to ONE patient at a time, by selecting the patient and click-**
+//** PURPOSE:    ing the add notes button. The user also has the option of change days, by   **
+//** PURPOSE:    selecting a day from another spinner and then clicking the change day       **
+//** PURPOSE:    button. Finally the user can remove a patient from the schedule by long     **
+//** PURPOSE:    clicking the patient name.                                                  **
+//*********************************************************************************************
 @SuppressLint("NewApi")
 public class MyDay extends ListActivity 
 				implements LoaderCallbacks<Cursor>
@@ -59,8 +71,8 @@ public class MyDay extends ListActivity
        //Setting up the Spinner with a list from the database
        spinnerPatient = (Spinner)findViewById(R.id.spinnerPatientSelectionMyDay);
        spinnerDay     = (Spinner)findViewById(R.id.spinnerDaySelectionMyDay);
-       setUpDaySpinner();
-       setSpinnerPatientSelection();
+       setUpPatientSpinner();
+       getSpinnerPatientSelection();
        getSpinnerDaySelection();
        
        //Set up the Long Click Handler
@@ -70,19 +82,19 @@ public class MyDay extends ListActivity
        lview = getListView();
        getChecked();
        
+       //Set up the List View
        String[] from = new String[] { Constants.COLUMN_PATIENT_NAME };
-       
        int[] to = new int[] { R.id.checkbox1 };
        
        myAdapter = new SimpleCursorAdapter(this, R.layout.checkboxes_layout, null, from, to, 0);
        setListAdapter(myAdapter);
-       
+    
        getLoaderManager().initLoader(1, null, this);
        registerForContextMenu(getListView());
        getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
        getListView().setTextFilterEnabled(true);
        
-       
+       //Set up the Buttons
        btnBack      = (Button)findViewById(R.id.btnBackMyDay);
        btnAdd       = (Button)findViewById(R.id.btnAddMyDay);
        btnMove      = (Button)findViewById(R.id.btnMovePatientsMyDay);
@@ -98,77 +110,11 @@ public class MyDay extends ListActivity
 
    }//End of On Create
     
-	//Setting up the long click listener
-	private void longClickHandler()
-	{
-		ListView lv = getListView();
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){ 
-               @Override 
-               public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) 
-              { 
-            	   longClickPatientToDelete = ((TextView) view).getText().toString();
-            	   deleteRecordForLongClick();
-            	   return false;
-              } 
-         }); 
-	}//End of longClickHandler
-    
-	//For delete one record at a time with the Long Click
-		private void deleteRecordForLongClick ()
-		{
-			
-			//Show an alert dialog to confirm deletion
-			AlertDialog dialog = new AlertDialog.Builder(this).create();
-			dialog.setMessage("Are you sure you want to unschedule " + longClickPatientToDelete + "?");
-
-			//Set up two buttons. Right one is BUTTON_POSITIVE
-			dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Unschedule",
-				new DialogInterface.OnClickListener()
-				{	
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + longClickPatientToDelete + "'";
-						String column = getDayColumn();
-						ContentValues value = new ContentValues();
-						value.put(column, 0);
-						
-						//Delete one record..
-						Toast.makeText(getApplicationContext(), "Patient " + longClickPatientToDelete + " unScheduled", Toast.LENGTH_SHORT).show();
-						 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
-								 value, whereClause, null);
-					}
-				});
-
-			//This is the left button in the dialog box
-			dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-				new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						//Do nothing. Dialog will simply disappear.
-					}
-				});
-			dialog.show();
-		}//END deleteRecord
-    
-	private void setUpDaySpinner() 
-	{
-		String[] projection = new String[] { Constants._id, Constants.COLUMN_PATIENT_NAME };
-		
-		spinCur = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
-				projection, null, null, null);
-		
-		String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
-		int[] to = new int[] { android.R.id.text1, R.id.spinnerPatientSelectionMyDay };
-		
-		spinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item,
-							spinCur, columns, to, 0);
-		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-		spinnerPatient.setAdapter(spinnerAdapter);
-	} 
-
+	//*******************************************************
+	//** The method is an onClick Listener for the buttons **
+	//** It contains a switch statement to perform an      **
+	//** action when one of the buttons is clicked.        **
+	//*******************************************************
 	private OnClickListener myButtonListener = new OnClickListener()
 	{
 		@Override
@@ -192,18 +138,106 @@ public class MyDay extends ListActivity
 				case R.id.btnAddNotesMyDayPage:      startNotesPage();
 			}
 		}
-
-
 	}; 
+	
+	//**********************************************************
+	//** The method is a long click user for the patient      **
+	//** names. When a user long clicks a name another        **
+	//** method is called to remove the patient from the list **
+	//**********************************************************
+	private void longClickHandler()
+	{
+		ListView lv = getListView();
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){ 
+               @Override 
+               public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) 
+              { 
+            	   longClickPatientToDelete = ((TextView) view).getText().toString();
+            	   deleteRecordForLongClick();
+            	   return false;
+              } 
+         }); 
+	}//End of longClickHandler
+    
+	//**********************************************************
+	//** The method is to delete a patient on a long click.   **
+	//** It builds a dialog box to verify that the user wants **
+	//** to remove the patient from the schedule.             **
+	//**********************************************************
+	private void deleteRecordForLongClick ()
+	{
+		
+		//Show an alert dialog to confirm deletion
+		AlertDialog dialog = new AlertDialog.Builder(this).create();
+		dialog.setMessage("Are you sure you want to unschedule " + longClickPatientToDelete + "?");
 
-	//Method to start Notes page
+		//Set up two buttons. Right one is BUTTON_POSITIVE
+		dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Unschedule",
+			new DialogInterface.OnClickListener()
+			{	
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					//Have to remove the patient from the selectedBoxes Array
+					selectedBoxes.remove(longClickPatientToDelete);
+					String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + longClickPatientToDelete + "'";
+					String column = getDayColumn();
+					ContentValues value = new ContentValues();
+					value.put(column, 0);
+					
+					//Delete one record..
+					Toast.makeText(getApplicationContext(), "Patient " + longClickPatientToDelete + " unScheduled", Toast.LENGTH_SHORT).show();
+					 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
+							 value, whereClause, null);
+				}
+			});
+
+		//This is the left button in the dialog box
+		dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+			new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					//Do nothing. Dialog will simply disappear.
+				}
+			});
+		dialog.show();
+	}//END deleteRecord
+    
+	//*******************************************************
+	//** The method is to load the patient spinner with    **
+	//** all the patients in the database. It uses a simple**
+	//** cursor adapter.                                   **
+	//*******************************************************
+	private void setUpPatientSpinner() 
+	{
+		String[] projection = new String[] { Constants._id, Constants.COLUMN_PATIENT_NAME };
+		
+		spinCur = getContentResolver().query(PatientsDatabaseProvider.TABLE_URI, 
+				projection, null, null, null);
+		
+		String[] columns = new String[] { Constants.COLUMN_PATIENT_NAME };
+		int[] to = new int[] { android.R.id.text1, R.id.spinnerPatientSelectionMyDay };
+		
+		spinnerAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item,
+							spinCur, columns, to, 0);
+		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		spinnerPatient.setAdapter(spinnerAdapter);
+	} 
+
+	//*******************************************************
+	//** The method is to start the notes page. It passes  **
+	//** name of the patient, screen name, and the day     **
+	//** so that the notes activity knows where to return. **
+	//*******************************************************
 	private void startNotesPage() 
 	{
 		String[] selectedNames;
 		selectedNames = (String[]) selectedBoxes.toArray(new String[selectedBoxes.size()]); 
 		
-		if(selectedNames.length > 1 || selectedNames.length == 0)
-			Toast.makeText(this, "You must select ONE patient", Toast.LENGTH_SHORT).show();
+		if(selectedNames.length > 1 || selectedNames.length == 0){
+			Toast.makeText(this, "Select only One patient to view notes", Toast.LENGTH_SHORT).show();}
 		else 
 		{
 			String activity = "MyDay.class";
@@ -215,7 +249,12 @@ public class MyDay extends ListActivity
 		}
 	}//End of startNotesPage
 
-	//Method to change the day 
+	
+	//*******************************************************
+	//** The method is to allow the user to change the day.**
+	//** The user selects a day from a spinner and then    **
+	//** clicks change day button.                         **
+	//******************************************************* 
 	private void changeDay() 
 	{
 		if(spinnerDaySelection.getText().equals("Select A Day") || spinnerDaySelection.getText().equals("Clear Schedule"))
@@ -229,8 +268,11 @@ public class MyDay extends ListActivity
 	}//End of Change day
 	
 	
-	//To add Patients to the day.
-	@SuppressLint("NewApi")
+	//*******************************************************
+	//** The method is to add a patient to the schedule for**
+	//** the day. The user selects a patient from the spin-**
+	//** ner and clicks the add button.                    **
+	//*******************************************************
 	private void addPatient() 
 	{
 		String patientSelection = spinnerPatientSelection.getText().toString();
@@ -249,7 +291,11 @@ public class MyDay extends ListActivity
 		 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
 	}//End of addPatient
 	
-	//Move Patients to different days
+	//*******************************************************
+	//** The method is to move patients to a different day.**
+	//** The user clicks the patient name and then clicks  **
+	//** the reschedule button.                            **
+	//*******************************************************
 	private void movePatients() 
 	{
 		 String selectionDay = (String) spinnerDaySelection.getText();
@@ -273,6 +319,7 @@ public class MyDay extends ListActivity
 				 Toast.makeText(this, "Patients already scheduled for this day.", Toast.LENGTH_SHORT).show();
 			 else
 			 {
+				 selectedBoxes.clear();
 				 ContentValues value = new ContentValues();
 				 if(selectionDay.equals("Monday"))
 				 {
@@ -315,8 +362,12 @@ public class MyDay extends ListActivity
 	}//End of  Schedule Patients
 	
 	
-	//To get the selection from the spinner for Patient.
-	private void setSpinnerPatientSelection()
+	//********************************************************
+	//** The method is to get the selection from the patient**
+	//** spinner. The user selects a patient in the spinner **
+	//** and it is placed in a text view for later use.     **
+	//********************************************************
+	private void getSpinnerPatientSelection()
 	{
 		spinnerPatient.setOnItemSelectedListener(
 		    new AdapterView.OnItemSelectedListener() {
@@ -337,9 +388,12 @@ public class MyDay extends ListActivity
 		);
 	}//End of setSpinnerPatientSelection
 	
-	//To get the selection from the spinner for Day.
 	
-	//Method to get the spinner day selection
+	//*******************************************************
+	//** The method is to get the selection from the day   **
+	//** spinner. The user selects a day in the spinner    **
+	//** and it is placed in a text view for later use.    **
+	//*******************************************************
 	private void getSpinnerDaySelection()
 	{
 		spinnerDay.setOnItemSelectedListener(
@@ -361,7 +415,12 @@ public class MyDay extends ListActivity
 		);
 	}//End of getSpinnerDaySelection
 	
-	//Get all checked items
+	//*******************************************************
+	//** The method adds and removes the users choices, in **
+	//** the check boxes, dynamically. When the user clicks**
+	//** on a check box it is add to a list array. When the**
+	//** user unchecks the box it is removed.              **
+	//*******************************************************
 	private void getChecked()
 	{
 		   lview.setOnItemClickListener(new ListView.OnItemClickListener() 
@@ -385,7 +444,11 @@ public class MyDay extends ListActivity
 	       });
 	}//End of getChecked
 
-	//Method to get the day
+	//*******************************************************
+	//** The method is used to get the day that the MyDay  **
+	//** activity is currently on. It returns a string that**
+	//** contains the column that is needed in database use**
+	//*******************************************************
 	private String getDayColumn()
 	{
 		String column; 
@@ -429,8 +492,5 @@ public class MyDay extends ListActivity
     {
             myAdapter.swapCursor(null);
             
-    }
-		
-
-}
-	
+    }	
+}//End of class

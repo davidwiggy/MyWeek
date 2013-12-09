@@ -1,0 +1,32 @@
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/checkbox1"
+    android:layout_width="fill_parent"
+    android:layout_height="40sp"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:gravity="center_vertical"
+    android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+    android:textSize="12sp"
+    android:textColor="@color/black"
+    android:paddingLeft="6dip"
+    android:paddingRight="6dip"
+    android:background="@layout/custom_checkbox">
+    
+    
+</CheckedTextView>
+
+    <LinearLayout
+        android:id="@+id/listViewHolderMyDay"
+        android:layout_width="match_parent"
+        android:layout_height="220dip"
+        android:layout_below="@id/lineMyDay" >
+
+    <TextView
+        android:id="@+id/testing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/BabyBlue"
+        android:text"DFSDFDFSDF"
+        android:textSize="24sp" />
+    
+    </LinearLayout>
+    

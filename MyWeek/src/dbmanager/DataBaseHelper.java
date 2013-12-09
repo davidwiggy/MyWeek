@@ -1,16 +1,16 @@
 package dbmanager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-
+//*********************************************************************************************
+//** Class:      DataBaseHelper                                                                       **
+//** Programmer: Timothy David Wiggins                                                       **
+//** PURPOSE:    This is the DataBaseHelper class that extends SQLiteOpenHelper.                                                  **
+//*********************************************************************************************
 public class DataBaseHelper extends SQLiteOpenHelper
 {
 	private SQLiteDatabase myDataBase;
@@ -25,7 +25,10 @@ public class DataBaseHelper extends SQLiteOpenHelper
 	}
 			
 	
-	//Create the Database
+	//*******************************************************
+	//** This method creates the database if the database  **
+	//** does not exist.                                   **
+	//*******************************************************
 	public SQLiteDatabase createDatabase() 
 	{
 		boolean dbExists = false;
@@ -39,35 +42,10 @@ public class DataBaseHelper extends SQLiteOpenHelper
 		}		
 		return myDataBase;
 	}//End of createDatabase
-	
-	//Copy database file to the DATABASE_NAME path
-	private void copyDataBaseFromAssets() throws IOException
-	{
-		File myDirectory = new File(Constants.DATABASE_PATH);
-		if(!myDirectory.exists())
-		{
-			myDirectory.mkdir();
-		}
-		
-		InputStream myInput = myContext.getAssets().open(Constants.DATABASE_NAME);
-		String outFileName = Constants.DATABASE_PATH + "/" + Constants.DATABASE_NAME;
-		//Open the Empty Database as the output stream
-		OutputStream myOutput = new FileOutputStream(outFileName);
-		
-		byte[] buffer = new byte[1024];
-		int length;
-		while ((length = myInput.read(buffer)) > 0)
-		{
-			myOutput.write(buffer, 0, length);
-		}
-		
-		//Close the streams
-		myOutput.flush();
-		myOutput.close();
-		myInput.close();
-	}//End of copyDataBaseFromAssets
 
-
+	//*******************************************************
+	//** This method checks to see if the database exists. **
+	//*******************************************************
 	private boolean checkIfDataBaseExists() 
 	{
 		Log.d("In checkDatabaseExists", "Checking Database");

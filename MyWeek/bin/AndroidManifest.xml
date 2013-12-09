@@ -60,6 +60,15 @@
           	    <category android:name="android.intent.category.DEFAULT"/>
           	</intent-filter>
           	</activity>
+        <activity 
+            android:name="com.example.myweek.Totals"
+          	android:label="@string/app_name"
+          	android:screenOrientation="portrait">
+          	<intent-filter>
+          	    <action android:name="android.intent.action.View"/>
+          	    <category android:name="android.intent.category.DEFAULT"/>
+          	</intent-filter>
+          	</activity>
           <provider 
               android:name="dbmanager.PatientsDatabaseProvider"
               android:authorities="com.example.myweek.PatientsDatabaseProvider"

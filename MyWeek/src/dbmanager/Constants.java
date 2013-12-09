@@ -1,7 +1,12 @@
 package dbmanager;
 
+//*********************************************************************************************
+//** Class:      Constants                                                                   **
+//** Programmer: Timothy David Wiggins                                                       **
+//** PURPOSE:    This class holds Constants that are used through out the program.           **                                                 **
+//*********************************************************************************************
+
 public class Constants {
-	
 	public static final int DATABASE_VERSION = 1;
 	public static final String DATABASE_NAME = "Patientsdb";
 	public static final String TABLE_NAME = "PatientsTable";
@@ -26,4 +31,4 @@ public class Constants {
 						+ COLUMN_NOTES        + " text);";
 	
 
-}
+}//End of class
