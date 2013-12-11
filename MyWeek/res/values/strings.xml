@@ -17,15 +17,22 @@
     <color name="orange4">#F7BE45</color>
     <color name="orange5">#F7D896</color>
     <color name="grey05">#ACA899</color>
+    <string-array name="days_only_array">
+        <item>Select A Day</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item >Wednesday</item>
+        <item >Thursday</item>
+        <item >Friday</item>
+    </string-array>
     <string-array name="days_array">
         <item>Select A Day</item>
-        <item>Clear Schedule</item>
+        <item>Clear From Schedule</item>
         <item >Monday</item>
         <item >Tuesday</item>
         <item >Wednesday</item>
         <item >Thursday</item>
         <item >Friday</item>
-        
     </string-array>
         <string name="lblButtonBack">Back</string>
         <string name="lblButtongo_to_day">Go To Day</string>
@@ -33,7 +40,7 @@
         <string name="lbl_welcome_to_my_week_main">Welcome To My Week</string>
         <string name="btn_txt_lbl_Totals_Main">Totals</string>
         <string name="btn_lbl_Finished_Main">Finished</string>
-        <string name="btn_lbl_manage_clients_main">Manage Clients</string>
+        <string name="btn_lbl_manage_clients_main">Manage Patients</string>
         <string name="btnlblBackManageClients">Back</string>
         <string name="btnlblAddManageClients">Add</string>
         <string name="btnlblScheduleManageClients">Schedule</string>
@@ -45,15 +52,18 @@
         <string name="btnlblRescheduleMyDayPage">Reschedule Patient</string>
         <string name="btnlblBackMyDayPage">Back</string>
         <string name="btnClearScheduleMyWeekPage">Clear Schedule</string>
-        <string name="lblspinnerSelectPatientMyDay">(Select a Patient to add to the day.)</string>
+        <string name="lblspinnerSelectPatientMyDay">(Select a Patient to add to the day or to Add/View notes.)</string>
         <string name="btnlblChangeDay">Change Day</string>
         <string name="lblNotesHeader">Notes</string>
-        <string name="btnlblAddNoteNotesPage">Add Note</string>
+        <string name="btnlblAddNoteNotesPage">Add/Update Note</string>
         <string name="btnlblBackNotesPage">Back</string>
         <string name="btnlblAddNotesMyDay">Add/View Notes</string>
         <string name="txtlblhintHoldPatientNameToDeleteManageClients">(Hold Patient name to Delete)</string>
         <string name="txtlblHintRemovePatientMyDay">(Hold patient name to remove)</string>
         <string name="lblTotalsHeader">Totals</string>
         <string name="btnlblBackTotalPage">Back</string>
+        <string name="txtlblHintRescheduleMyDay">(Tap patient name to reschedule)</string>
+        <string name="txtlblNotesMyDayListView">"Notes: "</string>
+        <string name="txtlblSpinnerMainActivity">(Select a day to go to My Day)</string>
    
 </resources>

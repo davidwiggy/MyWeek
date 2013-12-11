@@ -16,7 +16,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 //*********************************************************************************************
 //** Class:      MyWeekMainActivity                                                          **
@@ -28,7 +32,9 @@ import android.widget.Button;
 //*********************************************************************************************
 public class MyWeekMainActivity extends Activity {
 	
-	Button btnMyWeekPageStarter, btnManageClientsStarter, btnTotal;
+	Button btnMyWeekPageStarter, btnManageClientsStarter, btnTotal, btnMyDay;
+	Spinner spinnerDay;
+	TextView spinnerDaySelection;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +42,19 @@ public class MyWeekMainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_week_main);
         
+        //Setup Spinner
+        spinnerDay = (Spinner)findViewById(R.id.spinnerDaySelectionMainActivity);
+        getSpinnerDaySelection();
+        
         //Setting up MyWeekPage Button
         btnMyWeekPageStarter    = (Button) findViewById(R.id.btnMyWeekPage);
         btnManageClientsStarter = (Button)findViewById(R.id.btnManageClients);
         btnTotal                = (Button)findViewById(R.id.btnTotals);
+        btnMyDay                = (Button)findViewById(R.id.btnMyDayMainActivity);
         btnMyWeekPageStarter   .setOnClickListener(myButtonListener);
         btnManageClientsStarter.setOnClickListener(myButtonListener);
         btnTotal               .setOnClickListener(myButtonListener);
+        btnMyDay               .setOnClickListener(myButtonListener);
         
     }//End of On Create
     
@@ -58,18 +70,65 @@ public class MyWeekMainActivity extends Activity {
 		{
 			switch (v.getId())
 			{
-				case R.id.btnMyWeekPage:	Intent startWeekPage = new Intent(MyWeekMainActivity.this, myWeekPage.class);
-    										startActivity(startWeekPage);
-    										break;
+				case R.id.btnMyWeekPage:	    Intent startWeekPage = new Intent(MyWeekMainActivity.this, myWeekPage.class);
+    										    startActivity(startWeekPage);
+    										    break;
     											
-				case R.id.btnManageClients:	Intent startManageClients = new Intent(MyWeekMainActivity.this, ManageClients.class);
-											startActivity(startManageClients);
-											break;
+				case R.id.btnManageClients:	    Intent startManageClients = new Intent(MyWeekMainActivity.this, ManageClients.class);
+											    startActivity(startManageClients);
+											    break;
 											
-				case R.id.btnTotals:  		Intent startTotal = new Intent(MyWeekMainActivity.this, Totals.class);
-											startActivity(startTotal);
-											break;
+				case R.id.btnMyDayMainActivity: startMyDay();
+												break;
+											
+				case R.id.btnTotals:  		    Intent startTotal = new Intent(MyWeekMainActivity.this, Totals.class);
+											    startActivity(startTotal);
+											    break;
 			}
 		}
 	}; 
-}
+	
+	//*******************************************************
+	//** The method is to start the activity my day. If the**
+	//** user has selected a day the activity starts, if   **
+	//** not they will get a toast message.                **
+	//*******************************************************
+	private void startMyDay()
+	{
+		if(spinnerDaySelection.getText().equals("Select A Day"))
+			Toast.makeText(this, "You must select a day first", Toast.LENGTH_LONG).show();
+		else
+		{
+			Intent startMyDayActivity = new Intent(this, MyDay.class);
+			startMyDayActivity.putExtra("activity", 1);
+			startMyDayActivity.putExtra("day_name", spinnerDaySelection.getText().toString());
+			startActivity(startMyDayActivity);
+		}
+	}
+	
+	//*******************************************************
+	//** The method is to get the selection from the day   **
+	//** spinner. The user selects a day in the spinner    **
+	//** and it is placed in a text view for later use.    **
+	//*******************************************************
+	private void getSpinnerDaySelection()
+	{
+		spinnerDay.setOnItemSelectedListener(
+		    new AdapterView.OnItemSelectedListener() 
+		    {
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View view,
+						int arg2, long arg3) 
+				{
+					spinnerDaySelection = (TextView) view;
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) 
+				{
+					//Nothing needed here
+				}
+		    }
+		);
+	}//End of getSpinnerDaySelection
+}//End of class

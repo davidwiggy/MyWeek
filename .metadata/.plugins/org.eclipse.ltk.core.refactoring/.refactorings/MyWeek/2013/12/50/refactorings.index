@@ -1,0 +1,3 @@
+1386604724492	Extracts string '(Tap patient name to reschedule)' into R.string.txtlblHintRescheduleMyDay
+1386605854725	Extracts string 'Notes: ' into R.string.txtlblNotesMyDayListView
+1386611466949	Extracts string '(Select a day to go to My Day)' into R.string.txtlblSpinnerMainActivity

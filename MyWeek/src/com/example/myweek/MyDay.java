@@ -1,7 +1,5 @@
 package com.example.myweek;
 
-import java.util.ArrayList;
-
 import dbmanager.Constants;
 import dbmanager.PatientsDatabaseProvider;
 import android.annotation.SuppressLint;
@@ -42,14 +40,13 @@ import android.widget.Toast;
 public class MyDay extends ListActivity 
 				implements LoaderCallbacks<Cursor>
 {
-	private ArrayList<String> selectedBoxes;
 	private SimpleCursorAdapter myAdapter, spinnerAdapter;
 	private Spinner spinnerDay, spinnerPatient;
-	private Button btnBack, btnAdd, btnMove, btnChangeDay;
-	private String day, longClickPatientToDelete;
-	private ListView lview;
+	private Button btnBack, btnAdd, btnChangeDay;
+	private String day, longClickPatientToDelete, shortClickPatientToMove;
 	private TextView title, spinnerPatientSelection, spinnerDaySelection, btnNotes;
 	private Cursor spinCur;
+	private int preActivity;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -58,11 +55,11 @@ public class MyDay extends ListActivity
 
        super.onCreate(savedInstanceState);    
        setContentView(R.layout.mydaypage);
-       selectedBoxes = new ArrayList<String>();
        
        //Getting passed in variables
        Intent intent = getIntent();
        day = intent.getStringExtra("day_name");
+       preActivity = intent.getIntExtra("activity",0);
        
        //Setting up the Title TextView
        title = (TextView)findViewById(R.id.titleDay);
@@ -78,15 +75,11 @@ public class MyDay extends ListActivity
        //Set up the Long Click Handler
        longClickHandler();
        
-       //Set up checkBoxes
-       lview = getListView();
-       getChecked();
-       
        //Set up the List View
-       String[] from = new String[] { Constants.COLUMN_PATIENT_NAME };
-       int[] to = new int[] { R.id.checkbox1 };
+       String[] from = new String[] { Constants.COLUMN_PATIENT_NAME, Constants.COLUMN_NOTES };
+       int[] to = new int[] { R.id.tvPatientNameMyDayListViewLayout, R.id.tvNotesMydDayListViewLayout };
        
-       myAdapter = new SimpleCursorAdapter(this, R.layout.checkboxes_layout, null, from, to, 0);
+       myAdapter = new SimpleCursorAdapter(this, R.layout.mydaylistviewlayout, null, from, to, 0);
        setListAdapter(myAdapter);
     
        getLoaderManager().initLoader(1, null, this);
@@ -97,13 +90,11 @@ public class MyDay extends ListActivity
        //Set up the Buttons
        btnBack      = (Button)findViewById(R.id.btnBackMyDay);
        btnAdd       = (Button)findViewById(R.id.btnAddMyDay);
-       btnMove      = (Button)findViewById(R.id.btnMovePatientsMyDay);
        btnChangeDay = (Button)findViewById(R.id.btnChangeDayPatientsMyDay);
        btnNotes     = (Button)findViewById(R.id.btnAddNotesMyDayPage);
        
        btnBack     .setOnClickListener(myButtonListener);
        btnAdd      .setOnClickListener(myButtonListener);
-       btnMove     .setOnClickListener(myButtonListener);
        btnChangeDay.setOnClickListener(myButtonListener);
        btnNotes    .setOnClickListener(myButtonListener);
        
@@ -122,15 +113,11 @@ public class MyDay extends ListActivity
 		{
 			switch (v.getId())
 			{
-				case R.id.btnBackMyDay:				 Intent startMyWeekPageActivity = new Intent(MyDay.this, myWeekPage.class);
-    												 startActivity(startMyWeekPageActivity);
-    												 break;
+				case R.id.btnBackMyDay:				 previousPage();
+													 break;
     												 
 				case R.id.btnAddMyDay:			 	 addPatient();
-													 break;
-													 
-				case R.id.btnMovePatientsMyDay: 	 movePatients();
-													 break;
+													 break;													
 													 
 				case R.id.btnChangeDayPatientsMyDay: changeDay();
 													 break;
@@ -140,21 +127,82 @@ public class MyDay extends ListActivity
 		}
 	}; 
 	
+	//*******************************************************
+	//** The method is to allow the user to go back to the **
+	//** previous screen.                                  **
+	//******************************************************* 
+	public void previousPage()
+	{
+		if(preActivity == 1)
+		{
+			Intent startMyWeekMainActivity = new Intent(MyDay.this, MyWeekMainActivity.class);
+			startActivity(startMyWeekMainActivity);
+		}
+		else
+		{
+			Intent startMyWeekPageActivity = new Intent(MyDay.this, myWeekPage.class);
+			startActivity(startMyWeekPageActivity);
+		}
+		 
+	}
+	
+	//**********************************************************
+	//** The method is a short click user for the patient     **
+	//** names. When a user short clicks a name another       **
+	//** method is called to reschedule.                      **
+	//**********************************************************
+	public void onListItemClick(ListView myList, View myView, int position, long id)
+	{
+		//super.onListItemClick(myList, myView, position, id);
+
+		TextView tv = (TextView) myView.findViewById(R.id.tvPatientNameMyDayListViewLayout);
+		shortClickPatientToMove = ((TextView) tv).getText().toString();
+		
+		//Show an alert dialog to confirm deletion
+				AlertDialog dialog = new AlertDialog.Builder(this).create();
+				dialog.setMessage("Are you sure you want to reschedule " + shortClickPatientToMove + "?");
+
+				//Set up two buttons. Right one is BUTTON_POSITIVE
+				dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Reschedule",
+					new DialogInterface.OnClickListener()
+					{	
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{		
+							movePatients();
+						}
+					});
+
+				//This is the left button in the dialog box
+				dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+					new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							//Do nothing. Dialog will simply disappear.
+						}
+					});
+				dialog.show();
+
+	}//END onListItemClick
+		
 	//**********************************************************
 	//** The method is a long click user for the patient      **
 	//** names. When a user long clicks a name another        **
 	//** method is called to remove the patient from the list **
 	//**********************************************************
 	private void longClickHandler()
-	{
+	{	
 		ListView lv = getListView();
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){ 
                @Override 
                public boolean onItemLongClick(AdapterView<?> parent, View view, int pos, long id) 
               { 
-            	   longClickPatientToDelete = ((TextView) view).getText().toString();
+            	   TextView tv = (TextView) view.findViewById(R.id.tvPatientNameMyDayListViewLayout);
+            	   longClickPatientToDelete = ((TextView) tv).getText().toString();
             	   deleteRecordForLongClick();
-            	   return false;
+            	   return true;
               } 
          }); 
 	}//End of longClickHandler
@@ -178,8 +226,6 @@ public class MyDay extends ListActivity
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					//Have to remove the patient from the selectedBoxes Array
-					selectedBoxes.remove(longClickPatientToDelete);
 					String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + longClickPatientToDelete + "'";
 					String column = getDayColumn();
 					ContentValues value = new ContentValues();
@@ -233,23 +279,17 @@ public class MyDay extends ListActivity
 	//*******************************************************
 	private void startNotesPage() 
 	{
-		String[] selectedNames;
-		selectedNames = (String[]) selectedBoxes.toArray(new String[selectedBoxes.size()]); 
+		String name = ((TextView)spinnerPatientSelection).getText().toString();
 		
-		if(selectedNames.length > 1 || selectedNames.length == 0){
-			Toast.makeText(this, "Select only One patient to view notes", Toast.LENGTH_SHORT).show();}
-		else 
-		{
-			String activity = "MyDay.class";
-			Intent startNotesPage = new Intent(MyDay.this, Notes.class);
-			startNotesPage.putExtra("name", selectedNames[0]);
-			startNotesPage.putExtra("screen", activity);
-			startNotesPage.putExtra("day", day);
-			startActivity(startNotesPage);
-		}
+		String activity = "MyDay.class";
+		Intent startNotesPage = new Intent(MyDay.this, Notes.class);
+		startNotesPage.putExtra("name", name);
+		startNotesPage.putExtra("screen", activity);
+		startNotesPage.putExtra("day", day);
+		startActivity(startNotesPage);
+		
 	}//End of startNotesPage
 
-	
 	//*******************************************************
 	//** The method is to allow the user to change the day.**
 	//** The user selects a day from a spinner and then    **
@@ -257,16 +297,16 @@ public class MyDay extends ListActivity
 	//******************************************************* 
 	private void changeDay() 
 	{
-		if(spinnerDaySelection.getText().equals("Select A Day") || spinnerDaySelection.getText().equals("Clear Schedule"))
+		if(spinnerDaySelection.getText().equals("Select A Day"))
 			Toast.makeText(this, "You must select a day first", Toast.LENGTH_SHORT).show();
 		else
 		{
 			Intent startMyDayActivity = new Intent(this, MyDay.class);
 			startMyDayActivity.putExtra("day_name", spinnerDaySelection.getText().toString());
+			startMyDayActivity.putExtra("activity", preActivity);
 			startActivity(startMyDayActivity);
 		}
-	}//End of Change day
-	
+	}//End of Change day	
 	
 	//*******************************************************
 	//** The method is to add a patient to the schedule for**
@@ -299,17 +339,10 @@ public class MyDay extends ListActivity
 	private void movePatients() 
 	{
 		 String selectionDay = (String) spinnerDaySelection.getText();
-		 
-		 String[] selectedNames;
-		 selectedNames = (String[]) selectedBoxes.toArray(new String[selectedBoxes.size()]);
-		 
+		  
 		 if(selectionDay.equals("Select A Day"))
 		 {
 			 Toast.makeText(this, "You must select a day first", Toast.LENGTH_SHORT).show();
-		 }
-		 else if(selectedBoxes.isEmpty())
-		 {
-			 Toast.makeText(this, "You must select Patients first", Toast.LENGTH_SHORT).show();
 		 }
 		 else
 		 {
@@ -319,7 +352,6 @@ public class MyDay extends ListActivity
 				 Toast.makeText(this, "Patients already scheduled for this day.", Toast.LENGTH_SHORT).show();
 			 else
 			 {
-				 selectedBoxes.clear();
 				 ContentValues value = new ContentValues();
 				 if(selectionDay.equals("Monday"))
 				 {
@@ -347,21 +379,17 @@ public class MyDay extends ListActivity
 					 value.put(column, 0);
 				 }
 				 
-				 //For loop to update all selected names.
-				 for(int x = 0; x < selectedNames.length; x++)
-				 {
-					 String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + selectedNames[x] + "'";
-					 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
+				 String whereClause = Constants.COLUMN_PATIENT_NAME + " = " + "'" + shortClickPatientToMove + "'";
+			     getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
 							 value, whereClause, null);
-				 }
+				 
 				 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
 			 }
 
 		 }//End of Condition
 
 	}//End of  Schedule Patients
-	
-	
+		
 	//********************************************************
 	//** The method is to get the selection from the patient**
 	//** spinner. The user selects a patient in the spinner **
@@ -387,7 +415,6 @@ public class MyDay extends ListActivity
 		    }
 		);
 	}//End of setSpinnerPatientSelection
-	
 	
 	//*******************************************************
 	//** The method is to get the selection from the day   **
@@ -415,35 +442,6 @@ public class MyDay extends ListActivity
 		);
 	}//End of getSpinnerDaySelection
 	
-	//*******************************************************
-	//** The method adds and removes the users choices, in **
-	//** the check boxes, dynamically. When the user clicks**
-	//** on a check box it is add to a list array. When the**
-	//** user unchecks the box it is removed.              **
-	//*******************************************************
-	private void getChecked()
-	{
-		   lview.setOnItemClickListener(new ListView.OnItemClickListener() 
-	       {
-	           @Override
-	           public void onItemClick(AdapterView<?> parent, View view, int position,
-	                           long id)
-	           {
-	        	   if (lview.isItemChecked(position))
-	               {
-	        		   String item = ((TextView) view).getText().toString();
-	                   selectedBoxes.add(item);
-	               } 
-	        	   else
-	        	   {
-	        		   
-	        		   String item = ((TextView) view).getText().toString();
-	        		   selectedBoxes.remove(item);
-	        	   }
-	           }
-	       });
-	}//End of getChecked
-
 	//*******************************************************
 	//** The method is used to get the day that the MyDay  **
 	//** activity is currently on. It returns a string that**

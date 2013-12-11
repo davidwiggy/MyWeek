@@ -14,7 +14,7 @@
     <RelativeLayout
         android:id="@+id/textViewsHolder"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true" >
 
         <TextView
@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
             android:text="@string/my_weekTitle"
             android:textColor="@color/BabyBlue"
             android:textSize="24sp" />
@@ -169,7 +168,7 @@
         android:id="@+id/buttonHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
+
         android:layout_below="@+id/listViewHolder" >
         
 	    <Button
@@ -194,7 +193,7 @@
 	        android:id="@+id/spinnerDaySelectionMyWeekPage"
 	        android:layout_width="0dp"
 	        android:layout_height="40dip"
-	        android:entries="@array/days_array"
+	        android:entries="@array/days_only_array"
 	        android:layout_weight=".90" />
     
     
@@ -206,7 +205,6 @@
         android:layout_height="35dip"
         android:layout_below="@+id/buttonHolder"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="05dp"
         android:background="@layout/buttonlayout"
         android:text="@string/btnClearScheduleMyWeekPage"
         android:textSize="5pt"

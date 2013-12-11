@@ -105,7 +105,7 @@ public class myWeekPage extends ListActivity
 	{
 		//Show an alert dialog to confirm deletion
 		AlertDialog dialog = new AlertDialog.Builder(this).create();
-		dialog.setMessage("Are you sure you would like to delete ALL patients?");
+		dialog.setMessage("Are you sure you would like to clear the week schedule?");
 		
 		//Set up the buttons. Right is Button_Postive
 		dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Delete All",

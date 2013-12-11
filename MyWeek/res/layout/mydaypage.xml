@@ -11,16 +11,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:textColor="@color/BabyBlue"
         android:textSize="24sp" />
 
+    <TextView 
+        android:id="@+id/txtlblShortClickHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleDay"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/BabyBlue"
+        android:text="@string/txtlblHintRescheduleMyDay"/>
     <TextView
         android:id="@+id/txtlblCurrentPatients"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/titleDay"
-        android:layout_marginTop="16dp"
+        android:layout_below="@+id/txtlblShortClickHint"
         android:text="@string/lblCurrentPatientsManageClients"
         android:textColor="@color/BabyBlue" />
            
@@ -28,8 +36,7 @@
            android:id="@+id/txtlblLongClickHint"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_below="@+id/titleDay"
-           android:layout_marginTop="16dp"
+           android:layout_below="@+id/txtlblShortClickHint"
            android:layout_alignParentRight="true"
            android:text="@string/txtlblHintRemovePatientMyDay"
            android:textColor="@color/BabyBlue"/>
@@ -79,7 +86,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/listViewHolderMyDay"
         android:layout_marginTop="35dip"
-        android:entries="@array/days_array" />
+        android:entries="@array/days_only_array" />
 
     <Button
         android:id="@+id/btnAddMyDay"
@@ -93,20 +100,20 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/btnMovePatientsMyDay"
+        android:id="@+id/btnAddNotesMyDayPage"
         android:layout_width="150dip"
         android:layout_height="35dip"
         android:layout_alignParentRight="true"
         android:layout_below="@id/spinnerDaySelectionMyDay"
         android:layout_marginTop="10dip"
         android:background="@layout/buttonlayout"
-        android:text="@string/btnlblRescheduleMyDayPage"
+        android:text="@string/btnlblAddNotesMyDay"
         android:textSize="5pt"
         android:textStyle="bold" />
-
+    
     <Button
         android:id="@+id/btnChangeDayPatientsMyDay"
-        android:layout_width="105dip"
+        android:layout_width="150dip"
         android:layout_height="35dip"
         android:layout_alignParentRight="true"
         android:layout_below="@id/btnAddMyDay"
@@ -118,26 +125,13 @@
 
     <Button
         android:id="@+id/btnBackMyDay"
-        android:layout_width="105dip"
+        android:layout_width="150dip"
         android:layout_height="35dip"
-        android:layout_below="@id/btnMovePatientsMyDay"
+        android:layout_below="@id/btnAddNotesMyDayPage"
         android:layout_marginTop="10dip"
         android:background="@layout/buttonlayout"
         android:text="@string/btnlblBackMyDayPage"
         android:textSize="5pt"
         android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/btnAddNotesMyDayPage"
-        android:layout_width="105dip"
-        android:layout_height="35dip"
-        android:layout_centerInParent="true"
-        android:layout_alignBottom="@+id/btnBackMyDay"
-        android:layout_below="@id/btnMovePatientsMyDay"
-        android:layout_marginTop="10dip"
-        android:background="@layout/buttonlayout"
-        android:textSize="5pt"
-        android:textStyle="bold"
-        android:text="@string/btnlblAddNotesMyDay" />
 
 </RelativeLayout>

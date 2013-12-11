@@ -184,7 +184,7 @@ public class ManageClients extends ListActivity
 		 else
 		 {
 			 ContentValues value = new ContentValues();
-			 if(sel.equals("Clear Schedule"))
+			 if(sel.equals("Clear From Schedule"))
 			 {
 				 value.put(Constants.COLUMN_MONDAY, 0);
 			 	 value.put(Constants.COLUMN_TUESDAY, 0);
@@ -209,7 +209,7 @@ public class ManageClients extends ListActivity
 				 getContentResolver().update(PatientsDatabaseProvider.TABLE_URI, 
 						 value, whereClause, null);
 			 }
-			 Toast.makeText(this, "Patients scheduled", Toast.LENGTH_SHORT).show();
+			 Toast.makeText(this, "Patients scheduled updated", Toast.LENGTH_SHORT).show();
 
 		 }//End of Condition
 	}//End of  Schedule Patients
